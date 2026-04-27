@@ -1,0 +1,56 @@
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: ms-postgres
+    environment:
+      POSTGRES_DB: ms-db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+  ms-usuario:
+    build:
+      context: ./ms-usuario
+      dockerfile: Dockerfile
+    container_name: ms-usuario-app
+    ports:
+      - "8080:8080"
+    services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: ms-postgres
+    environment:
+      POSTGRES_DB: ms-db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+  ms-usuario:
+    build:
+      context: ./ms-usuario
+      dockerfile: Dockerfile
+    container_name: ms-usuario-app
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=jdbc:postgresql://postgres-db:5432/ms-db
+      - USER_NAME=admin
+      - PASSWORD=root
+      - GEOCODING_KEY= ${GEOCODINGKEY}
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI = https://dev-up1zt2lh8orqmjdq.us.auth0.com/
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_AUDIENCES = https://api.ms-usuarios.com
+    depends_on:
+      - postgres-db
+
+volumes:
+  postgres_data:
+    depends_on:
+      - postgres-db

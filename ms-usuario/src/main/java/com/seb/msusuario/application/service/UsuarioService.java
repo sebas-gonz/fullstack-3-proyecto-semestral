@@ -1,8 +1,13 @@
 package com.seb.msusuario.application.service;
 
+import com.seb.msusuario.application.exception.UserEmailExistException;
+import com.seb.msusuario.application.exception.UserNotFoundException;
 import com.seb.msusuario.domain.model.Usuario;
 import com.seb.msusuario.application.port.in.UsuarioInputPort;
 import com.seb.msusuario.application.port.out.UsuarioOutputPort;
+import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioRequest;
+import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioResponse;
+import com.seb.msusuario.infrastructure.adapter.in.web.mapper.UsuarioDtoMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,62 +19,55 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsuarioService implements UsuarioInputPort {
     private final UsuarioOutputPort usuarioOutputPort;
+    private final UsuarioDtoMapper usuarioDtoMapper;
     @Override
-    public Usuario crearUsuario(Usuario usuario) {
-        if (usuarioOutputPort.obtenerUsuarioPorEmail(usuario.getEmail()).isPresent()
-            || usuarioOutputPort.obtenerUsuarioPorId(usuario.getId()).isPresent()
-            || usuarioOutputPort.obtenerUsuarioPorIdAuth0(usuario.getIdAuth0()).isPresent()){
-            throw new RuntimeException("El usuario ya existe en el sistema");
+    public UsuarioResponse crearUsuario(UsuarioRequest usuarioRequest) {
+        Usuario usuario = usuarioDtoMapper.toDomain(usuarioRequest);
+        if (usuarioOutputPort.obtenerUsuarioPorEmail(usuario.getEmail()).isPresent()) {
+            throw new UserEmailExistException(usuario.getEmail());
         }
-        else {
-            return (usuarioOutputPort.guardarUsuario(usuario));
-        }
+        return usuarioDtoMapper.toResponse(usuarioOutputPort.guardarUsuario(usuario));
     }
 
     @Override
-    public void elminiarUsuario(String id) {
+    public void eliminarUsuario(String id) {
         Optional<Usuario> usuarioOptional = usuarioOutputPort.obtenerUsuarioPorId(id);
         if (usuarioOptional.isEmpty()){
-            throw new RuntimeException("El usuario no existe en el sistema");
+            throw new UserNotFoundException(id);
         }
         usuarioOutputPort.eliminarUsuario(id);
 
     }
 
     @Override
-    public Usuario obtenerUsuarioPorId(String id) {
+    public UsuarioResponse obtenerUsuarioPorId(String id) {
         Optional<Usuario> usuario = usuarioOutputPort.obtenerUsuarioPorId(id);
-        if (usuario.isEmpty()){
-            throw new RuntimeException("El usuario no existe en el sistema");
-        } else {
-            return usuario.get();
+        if (usuario.isEmpty()) {
+            throw new UserNotFoundException(id);
         }
+        return usuarioDtoMapper.toResponse(usuario.get());
     }
 
     @Override
-    public Usuario actualizarUsuario(Usuario usuario) {
-        Usuario existente = usuarioOutputPort.obtenerUsuarioPorId(usuario.getId()).orElseThrow(
-                () -> new RuntimeException("El usuario no existe en el sistema"));
-        usuarioOutputPort.obtenerUsuarioPorEmail(usuario.getEmail()).ifPresent(
+    public UsuarioResponse actualizarUsuario(String id,UsuarioRequest usuarioRequest) {
+        Usuario existente = usuarioOutputPort.obtenerUsuarioPorId(id).orElseThrow(
+                () -> new UserNotFoundException(id));
+        usuarioOutputPort.obtenerUsuarioPorEmail(usuarioRequest.email()).ifPresent(
                 usuarioConEmail -> {
-                    if(!usuarioConEmail.getId().equals(usuario.getId())){
-                        throw new RuntimeException("El correo ya existe en el sistema");
+                    if(!usuarioConEmail.getId().equals(existente.getId())){
+                        throw new UserEmailExistException(existente.getEmail());
                     }
                 }
             );
-        existente.setEmail(usuario.getEmail());
-        existente.setNombre(usuario.getNombre());
-        existente.setApellido(usuario.getApellido());
-        return usuarioOutputPort.actualizarUsuario(existente);
+        existente.setEmail(usuarioRequest.email());
+        existente.setNombre(usuarioRequest.nombre());
+        existente.setApellido(usuarioRequest.apellido());
+        return usuarioDtoMapper.toResponse(usuarioOutputPort.guardarUsuario(existente));
     }
 
     @Override
-    public List<Usuario> obtenerTodosUsuarios() {
+    public List<UsuarioResponse> obtenerTodosUsuarios() {
         List<Usuario> usuarios = usuarioOutputPort.obtenerTodosUsuarios();
-        if (usuarios.isEmpty()){
-            throw new RuntimeException("No existen usuarios en el sistema");
-        } else {
-            return usuarios;
-        }
+        return  usuarioDtoMapper.toResponseList(usuarios);
     }
 }

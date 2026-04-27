@@ -19,6 +19,7 @@ public class Usuario {
     private String apellido;
     private String email;
     private String idAuth0;
+    private RolUsuario rol;
     private LocalDateTime fechaRegistro;
     private LocalDateTime fechaModificacion;
     private List<Direccion> direcciones;

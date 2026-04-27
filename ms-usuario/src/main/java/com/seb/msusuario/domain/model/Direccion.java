@@ -17,13 +17,12 @@ import java.util.UUID;
 public class Direccion {
     @Builder.Default
     private String id = UUID.randomUUID().toString();
-    //private Usuario usuario. Mientras el usuario tenga su lista de direcciones, es suficiente.
     private String calle;
     private String numero;
     private String ciudad;
     private String pais;
-    private BigDecimal latitud;
-    private BigDecimal longitud;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
     private LocalDateTime fechaRegistro;
     private LocalDateTime fechaModificacion;
 }
