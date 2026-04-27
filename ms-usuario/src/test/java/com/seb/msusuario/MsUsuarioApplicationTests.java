@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 @Slf4j
 @SpringBootTest(properties = {// Reemplaza esto por el nombre exacto de tu property
-        "GEOCODING_KEY=AIzaSyByxXeKP4dkhe6HjG_yqFqPrXpBuxsK52s"
+        "GEOCODING_KEY=key"
         })
 class MsUsuarioApplicationTests {
     @Autowired
