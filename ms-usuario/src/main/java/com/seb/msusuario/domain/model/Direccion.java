@@ -13,7 +13,6 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Direccion {
     @Builder.Default
     private String id = UUID.randomUUID().toString();

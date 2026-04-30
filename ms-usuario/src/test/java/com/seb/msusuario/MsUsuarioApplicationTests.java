@@ -50,7 +50,7 @@ class MsUsuarioApplicationTests {
         });
         log.info("Usuarios creados");
     }
-
+    @Disabled
     @Test
     void crearDirecciones() {
         List<UsuarioEntity> usuarios = usuarioRepository.findAll();

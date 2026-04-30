@@ -34,13 +34,14 @@ public class DireccionService implements DireccionInputPort {
         String lugar = String.format("%s %s %s %s", request.calle(),request.numero(),request.ciudad(),request.pais());
         Coordenadas coordenadas = geocodingOutPutPort.obtenerCoordenadas(lugar);
         Direccion direccion = Direccion.builder()
-                                .calle(request.calle())
-                                .numero(request.numero())
-                                .ciudad(request.ciudad())
-                                .pais(request.pais())
-                                .latitude(coordenadas.getLatitude())
-                                .longitude(coordenadas.getLongitude())
-                                .build();
+                .calle(request.calle())
+                .numero(request.numero())
+                .ciudad(request.ciudad())
+                .pais(request.pais())
+                .latitude(coordenadas.getLatitude())
+                .longitude(coordenadas.getLongitude())
+                .build();
+
         usuarioOptional.get().getDirecciones().add(direccion);
         usuarioOutputPort.guardarUsuario(usuarioOptional.get());
         return direccionDtoMapper.toResponse(direccion);
