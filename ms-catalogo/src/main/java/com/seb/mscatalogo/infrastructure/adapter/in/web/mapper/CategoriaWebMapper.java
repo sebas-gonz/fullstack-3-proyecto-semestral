@@ -14,4 +14,5 @@ public interface CategoriaWebMapper {
     CategoriaWebRequestCommand toCommand(CategoriaWebRequest categoriaWebRequest);
     CategoriaWebResponse toResponse(Categoria categoria);
     List<CategoriaWebResponse> toResponseList(List<Categoria> categorias);
+
 }

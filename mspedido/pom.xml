@@ -6,11 +6,11 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>4.0.6</version> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>ms-inventario</groupId>
-	<artifactId>msinventario</artifactId>
+	<groupId>ms-pedido</groupId>
+	<artifactId>mspedido</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>msinventario</name>
-	<description>msinventario</description>
+	<name>mspedido</name>
+	<description>mspedido</description>
 	<licenses>
 		<license />
 	</licenses>
@@ -84,11 +84,7 @@
         </dependency>
 
         <!-- Tests -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator-test</artifactId>

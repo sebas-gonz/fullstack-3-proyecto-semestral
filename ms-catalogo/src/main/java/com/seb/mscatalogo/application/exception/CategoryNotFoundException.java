@@ -8,7 +8,7 @@ import java.util.UUID;
 public class CategoryNotFoundException extends ApiException {
     public CategoryNotFoundException(UUID id) {
         super("Categoria con id: " + id.toString() + " no encontrado", HttpStatus.NOT_FOUND);
-    }
+        }
 
 
 

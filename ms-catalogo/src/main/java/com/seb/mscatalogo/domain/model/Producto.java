@@ -15,6 +15,7 @@ public class Producto {
     private String nombre;
     private String descripcion;
     private Double precioBase;
+    private Integer cantidadTotal;
     private Categoria categoria;
     private LocalDateTime fechaRegistro;
     private LocalDateTime fechaModificacion;

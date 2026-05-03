@@ -1,6 +1,6 @@
-package com.seb.msinventario.application.exception;
+package com.seb.mspedido.application.exception;
 
-import com.seb.msinventario.infrastructure.config.exception.ApiException;
+import com.seb.mspedido.infrastructure.config.exception.ApiException;
 import org.springframework.http.HttpStatus;
 
 public class AppException extends ApiException {

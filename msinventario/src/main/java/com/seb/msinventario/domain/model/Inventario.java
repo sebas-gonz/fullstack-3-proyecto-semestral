@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 @Getter @Setter
@@ -11,14 +12,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Inventario {
-    private UUID id;
+    @Setter(AccessLevel.NONE) @Builder.Default
+    private UUID inventarioId =  UUID.randomUUID();
     private String nombre;
-    private String calle;
-    private String numero;
-    private String ciudad;
-    private BigDecimal latitude;
-    private BigDecimal longitude;
+    private Ubicacion ubicacion;
     private Instant fechaRegistro;
     private Instant fechaModificacion;
-    private List<Stock> stocks;
+    @Builder.Default
+    private List<Stock> stocks = new ArrayList<>();
 }
