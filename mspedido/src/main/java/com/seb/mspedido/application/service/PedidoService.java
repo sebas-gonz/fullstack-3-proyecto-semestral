@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +27,15 @@ public class PedidoService implements PedidoInputPort {
     @Override
     public Pedido guardarPedido(PedidoInputCommand pedidoInputCommand) {
         Pedido pedido = pedidoDomainMapper.toDomain(pedidoInputCommand);
+        pedido.setFechaRegistro(Instant.now());
+        pedido.getDetalles().stream().forEach( detalle -> {
+            if (detalle.getDetalleId() == null) {
+                detalle.setDetalleId(UUID.randomUUID());
+            }
+            detalle.setPrecio(BigDecimal.valueOf(15000));
+            detalle.setFechaRegistro(Instant.now());
+        });
+        pedido.calcularTotal();
         return pedidoOutputPort.guardarPedido(pedido);
     }
 

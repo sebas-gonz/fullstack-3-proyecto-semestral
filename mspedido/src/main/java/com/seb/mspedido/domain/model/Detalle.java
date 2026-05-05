@@ -10,7 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Detalle {
-    @Setter(AccessLevel.NONE) @Builder.Default
+    @Setter @Builder.Default
     private UUID detalleId = UUID.randomUUID();
     private UUID productoId;
     private UUID inventarioId;
