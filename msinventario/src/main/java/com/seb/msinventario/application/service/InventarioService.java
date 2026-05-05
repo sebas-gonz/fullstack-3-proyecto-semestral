@@ -7,6 +7,7 @@ import com.seb.msinventario.application.port.in.command.mapper.InventarioCommand
 import com.seb.msinventario.application.port.out.InventarioOutputPort;
 import com.seb.msinventario.domain.model.Inventario;
 import com.seb.msinventario.domain.model.Ubicacion;
+import com.seb.msinventario.infrastructure.adapter.in.web.mapper.InventarioWebMapper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class InventarioService implements InventarioInputPort {
     private InventarioOutputPort inventarioOutputPort;
-    private InventarioCommandMapper inventarioCommandMapper;
+    private InventarioWebMapper  inventarioWebMapper;
     @Override
     public Inventario guardarInventario(InventarioInputCommand inventarioInputCommand) {
-        Inventario inventario = inventarioCommandMapper.toDomain(inventarioInputCommand);
+        Inventario inventario = inventarioWebMapper.toDomain(inventarioInputCommand);
         return inventarioOutputPort.guardarInventario(inventario);
     }
 
@@ -36,7 +37,7 @@ public class InventarioService implements InventarioInputPort {
         Inventario inventarioOptional = inventarioOutputPort.obtenerInventario(id).orElseThrow(
                 () -> new InventoryNotFoundException(id)
         );
-        Ubicacion ubicacion = inventarioCommandMapper.toDomain(inventarioInputCommand.ubicacion());
+        Ubicacion ubicacion = inventarioWebMapper.toDomain(inventarioInputCommand.ubicacion());
         inventarioOptional.setNombre(inventarioInputCommand.nombre());
         inventarioOptional.setUbicacion(ubicacion);
         return inventarioOutputPort.guardarInventario(inventarioOptional);

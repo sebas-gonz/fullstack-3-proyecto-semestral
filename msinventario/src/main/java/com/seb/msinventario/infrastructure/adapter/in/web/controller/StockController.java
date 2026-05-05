@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/inventario/{inventarioId}/stock")
+@RequestMapping("api/v1/inventarios/{inventarioId}/stock")
 @AllArgsConstructor
 public class StockController {
     private StockInputPort stockInputPort;

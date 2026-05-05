@@ -13,8 +13,6 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface InventarioCommandMapper {
-    Inventario toDomain(InventarioInputCommand inventarioInputCommand);
-    Ubicacion toDomain(UbicacionInputCommand ubicacionInputCommand);
     InventarioInputCommand toCommand(InventarioWebRequest inventarioWebRequest);
     UbicacionInputCommand  toCommand(UbicacionWebRequest ubicacionWebRequest);
 }
