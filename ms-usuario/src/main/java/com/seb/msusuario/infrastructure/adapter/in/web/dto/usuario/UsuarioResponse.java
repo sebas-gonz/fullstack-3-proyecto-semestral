@@ -5,6 +5,6 @@ import com.seb.msusuario.infrastructure.adapter.in.web.dto.direccion.DireccionRe
 
 import java.util.List;
 
-public record UsuarioResponse(String id, String nombre, String apellido, String email, RolUsuario rol,
-                              List<DireccionResponse> direcciones) {
+public record UsuarioResponse(String usuarioId, String nombre, String apellido, String email, RolUsuario rol,
+                              List<DireccionResponse> ubicaciones) {
 }

@@ -1,10 +1,9 @@
-package com.seb.mspedido.infrastructure.config.kafka;
+package seb.com.msenvio.infrastructure.config.kafka;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.converter.JacksonJsonMessageConverter;
 import org.springframework.kafka.support.converter.RecordMessageConverter;
-
 
 @Configuration
 public class KafkaConfig {

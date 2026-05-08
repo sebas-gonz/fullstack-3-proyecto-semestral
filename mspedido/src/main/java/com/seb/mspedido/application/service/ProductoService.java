@@ -4,7 +4,7 @@ import com.seb.mspedido.application.mapper.ProductoDomainMapper;
 import com.seb.mspedido.application.port.in.ActualizarProductoInputPort;
 import com.seb.mspedido.application.port.in.command.producto.ProductoActualizadoCommand;
 import com.seb.mspedido.application.port.out.ProductoCatalogoOutputPort;
-import com.seb.mspedido.domain.model.ProductoReferencia;
+import com.seb.mspedido.domain.model.ProductoCache;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +19,8 @@ public class ProductoService implements ActualizarProductoInputPort {
 
     @Override
     @Transactional
-    public ProductoReferencia actualizarProducto(ProductoActualizadoCommand productoActualizadoCommand) {
-        ProductoReferencia producto = productoDomainMapper.toDomain(productoActualizadoCommand);
+    public ProductoCache actualizarProducto(ProductoActualizadoCommand productoActualizadoCommand) {
+        ProductoCache producto = productoDomainMapper.toDomain(productoActualizadoCommand);
         return productoCatalogoOutputPort.guardarProductoReferencia(producto);
     }
 

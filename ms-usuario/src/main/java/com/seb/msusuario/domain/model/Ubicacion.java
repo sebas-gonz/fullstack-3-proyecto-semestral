@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Ubicacion {
     @Builder.Default
-    private String ubicacionId = UUID.randomUUID().toString();
+    private UUID ubicacionId = UUID.randomUUID();
     private UUID usuarioId;
     private String calle;
     private String numero;

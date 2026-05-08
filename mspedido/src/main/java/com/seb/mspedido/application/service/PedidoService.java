@@ -10,7 +10,6 @@ import com.seb.mspedido.application.port.out.PedidoEventPubilsherPort;
 import com.seb.mspedido.application.port.out.PedidoOutputPort;
 import com.seb.mspedido.application.port.out.ProductoCatalogoOutputPort;
 import com.seb.mspedido.domain.model.*;
-import com.seb.mspedido.infrastructure.adapter.out.rest.InventarioRestAdapter;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -41,10 +39,7 @@ public class PedidoService implements PedidoInputPort {
             throw new IllegalArgumentException("El pedido debe contener al menos un detalle");
         }
         pedido.getDetalles().forEach(detalle -> {
-            if (detalle.getDetalleId() == null) {
-                detalle.setDetalleId(UUID.randomUUID());
-            }
-            ProductoReferencia producto = productoCatalogoOutputPort.getProductoReferencia(detalle.getProductoId())
+            ProductoCache producto = productoCatalogoOutputPort.getProductoReferencia(detalle.getProductoId())
                     .orElseThrow(
                             () -> new RuntimeException("No existe el producto referencia " + detalle.getProductoId())
                     );
@@ -137,6 +132,7 @@ public class PedidoService implements PedidoInputPort {
     }
 
     @Override
+    @Transactional
     public void marcarPedidoEntregado(UUID pedidoId) {
         Pedido pedido = pedidoOutputPort.obtenerPedido(pedidoId).orElseThrow(
                 () -> new RuntimeException("Pedido no encontrado: " + pedidoId)

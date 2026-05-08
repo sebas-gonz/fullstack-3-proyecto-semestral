@@ -3,6 +3,7 @@ package com.seb.msusuario.application.service;
 import com.seb.msusuario.application.exception.AddressNotFoundException;
 import com.seb.msusuario.application.exception.UserNotFoundException;
 import com.seb.msusuario.application.port.in.DireccionInputPort;
+import com.seb.msusuario.application.port.in.command.CrearUbicacionCommand;
 import com.seb.msusuario.application.port.out.DireccionOutputPort;
 import com.seb.msusuario.application.port.out.GeocodingOutPutPort;
 import com.seb.msusuario.application.port.out.UsuarioOutputPort;
@@ -11,97 +12,98 @@ import com.seb.msusuario.domain.model.Ubicacion;
 import com.seb.msusuario.domain.model.Usuario;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.direccion.DireccionRequest;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.direccion.DireccionResponse;
-import com.seb.msusuario.infrastructure.adapter.in.web.mapper.DireccionDtoMapper;
+import com.seb.msusuario.infrastructure.adapter.in.web.mapper.DireccionWebMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class DireccionService implements DireccionInputPort {
     private final GeocodingOutPutPort geocodingOutPutPort;
     private final UsuarioOutputPort usuarioOutputPort;
-    private final DireccionDtoMapper  direccionDtoMapper;
+    private final DireccionWebMapper direccionWebMapper;
     private final DireccionOutputPort direccionOutputPort;
     @Override
-    public DireccionResponse agregarDireccion(String usuarioId, DireccionRequest request) {
-        Optional<Usuario> usuarioOptional = usuarioOutputPort.obtenerUsuarioPorId(usuarioId);
-        if (usuarioOptional.isEmpty()) {
-            throw new UserNotFoundException(usuarioId);
-        }
-        String lugar = String.format("%s %s %s %s", request.calle(),request.numero(),request.ciudad(),request.pais());
+    @Transactional
+    public Ubicacion agregarDireccion(UUID usuarioId, CrearUbicacionCommand  command) {
+        Usuario usuario = usuarioOutputPort.obtenerUsuarioPorId(usuarioId)
+                .orElseThrow(() -> new UserNotFoundException(usuarioId));
+        String lugar = String.format("%s %s %s %s", command.calle(),command.numero(),command.ciudad(),command.pais());
         Coordenadas coordenadas = geocodingOutPutPort.obtenerCoordenadas(lugar);
         Ubicacion ubicacion = Ubicacion.builder()
-                .calle(request.calle())
-                .numero(request.numero())
-                .ciudad(request.ciudad())
-                .pais(request.pais())
+                .calle(command.calle())
+                .numero(command.numero())
+                .ciudad(command.ciudad())
+                .pais(command.pais())
                 .latitude(coordenadas.getLatitude())
                 .longitude(coordenadas.getLongitude())
                 .build();
 
-        usuarioOptional.get().getDirecciones().add(ubicacion);
-        usuarioOutputPort.guardarUsuario(usuarioOptional.get());
-        return direccionDtoMapper.toResponse(ubicacion);
+        usuario.getUbicaciones().add(ubicacion);
+        return usuarioOutputPort.guardarUsuario(usuario).getUbicaciones().
+                stream()
+                .filter(u ->u.getUbicacionId().equals(ubicacion.getUbicacionId()))
+                .findFirst().orElseThrow(() -> new AddressNotFoundException(ubicacion.getUbicacionId()));
     }
     @Override
-    public DireccionResponse actualizarDireccion(String usuarioId, String direccionId, DireccionRequest request) {
-        Optional<Usuario> usuarioOptional = usuarioOutputPort.obtenerUsuarioPorId(usuarioId);
-        if (usuarioOptional.isEmpty()) {
-            throw new UserNotFoundException(usuarioId);
-        }
-        List<Ubicacion> direccionesUsuario = usuarioOptional.get().getDirecciones();
-        Ubicacion ubicacion = direccionesUsuario.stream().filter(d -> d.getId().equals(direccionId)).findFirst()
+    @Transactional
+    public Ubicacion actualizarDireccion(UUID usuarioId, UUID direccionId, CrearUbicacionCommand command) {
+        Usuario usuario = usuarioOutputPort.obtenerUsuarioPorId(usuarioId).orElseThrow(
+                () -> new UserNotFoundException(usuarioId)
+        );
+        List<Ubicacion> direccionesUsuario = usuario.getUbicaciones();
+        Ubicacion ubicacion = direccionesUsuario.stream()
+                .filter(d -> d.getUbicacionId().equals(direccionId)).findFirst()
                 .orElseThrow(() -> new AddressNotFoundException(direccionId));
-        String lugar = String.format("%s %s %s %s", request.calle(),request.numero(),request.ciudad(),request.pais());
+        String lugar = String.format("%s %s %s %s", command.calle(), command.numero(), command.ciudad(), command.pais());
         Coordenadas coordenadas = geocodingOutPutPort.obtenerCoordenadas(lugar);
-        ubicacion.setCalle(request.calle());
-        ubicacion.setNumero(request.numero());
-        ubicacion.setCiudad(request.ciudad());
-        ubicacion.setPais(request.pais());
+        ubicacion.setCalle(command.calle());
+        ubicacion.setNumero(command.numero());
+        ubicacion.setCiudad(command.ciudad());
+        ubicacion.setPais(command.pais());
         ubicacion.setLatitude(coordenadas.getLatitude());
         ubicacion.setLongitude(coordenadas.getLongitude());
-        usuarioOutputPort.guardarUsuario(usuarioOptional.get());
-        return direccionDtoMapper.toResponse(ubicacion);
+        usuarioOutputPort.guardarUsuario(usuario);
+        return usuarioOutputPort.guardarUsuario(usuario).getUbicaciones().stream()
+                .filter(u -> u.getUbicacionId().equals(direccionId)).findFirst()
+                .orElseThrow(() -> new AddressNotFoundException(direccionId));
     }
-
     @Override
-    public void eliminarDireccion(String usuarioId, String direccionId) {
-        Optional<Usuario> usuarioOptional = usuarioOutputPort.obtenerUsuarioPorId(usuarioId);
-        if (usuarioOptional.isEmpty()) {
-            throw new UserNotFoundException(usuarioId);
-        }
-        List<Ubicacion> direccionesUsuario = usuarioOptional.get().getDirecciones();
-        direccionesUsuario.removeIf(d -> d.getId().equals(direccionId));
-        usuarioOutputPort.guardarUsuario(usuarioOptional.get());
-    }
-
-    @Override
-    public DireccionResponse obtenerDireccionPorId(String direccionId) {
-        Optional<Ubicacion> direccionOptional = direccionOutputPort.obtenerDireccionPorId(direccionId);
-        if (direccionOptional.isEmpty()) {
+    public void eliminarDireccion(UUID usuarioId, UUID direccionId) {
+        Usuario usuario =  usuarioOutputPort.obtenerUsuarioPorId(usuarioId).orElseThrow(
+                () -> new UserNotFoundException(usuarioId)
+        );
+        List<Ubicacion> direccionesUsuario = usuario.getUbicaciones();
+        boolean eliminado = direccionesUsuario.removeIf(d -> d.getUbicacionId().equals(direccionId));
+        if (!eliminado) {
             throw new AddressNotFoundException(direccionId);
         }
-        return direccionDtoMapper.toResponse(direccionOptional.get());
+        usuarioOutputPort.guardarUsuario(usuario);
     }
 
     @Override
-    public List<DireccionResponse> obtenerTodasDirecciones() {
-        List<Ubicacion> direcciones =  direccionOutputPort.obtenerTodasDirecciones();
-        return direccionDtoMapper.toResponseList(direcciones);
+    public Ubicacion obtenerDireccionPorId(UUID direccionId) {
+        return direccionOutputPort.obtenerDireccionPorId(direccionId)
+                .orElseThrow(() -> new AddressNotFoundException(direccionId));
+    }
+
+    @Override
+    public List<Ubicacion> obtenerTodasDirecciones() {
+        return direccionOutputPort.obtenerTodasDirecciones();
     }
 
 
     @Override
-    public List<DireccionResponse> obtenerDireccionesPorUsuario(String usuarioId) {
-        Optional<Usuario> usuarioOptional = usuarioOutputPort.obtenerUsuarioPorId(usuarioId);
-        if (usuarioOptional.isEmpty()) {
-            throw new UserNotFoundException(usuarioId);
-        }
-        List<Ubicacion> direccionesUsuario = usuarioOptional.get().getDirecciones();
-        return direccionDtoMapper.toResponseList(direccionesUsuario);
+    public List<Ubicacion> obtenerDireccionesPorUsuario(UUID usuarioId) {
+        Usuario usuario = usuarioOutputPort.obtenerUsuarioPorId(usuarioId).orElseThrow(
+                () -> new UserNotFoundException(usuarioId)
+        );
+        return usuario.getUbicaciones();
     }
 
 }

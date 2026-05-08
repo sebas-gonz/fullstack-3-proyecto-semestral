@@ -1,6 +1,7 @@
 package com.seb.mspedido.infrastructure.adapter.in.kafka.listener;
 
 import com.seb.mspedido.application.port.in.PedidoInputPort;
+import com.seb.mspedido.infrastructure.adapter.in.kafka.dto.pedido.PedidoEnviadoEventDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -14,8 +15,8 @@ import java.util.UUID;
 public class EnvioEntregadoListener {
     private final PedidoInputPort pedidoInputPort;
     @KafkaListener(topics = "envio-entregado-topic", groupId = "ms-pedido-entrega-group")
-    public void escucharEnvioEnRuta(UUID pedidoId) {
-        log.info("Recibida notificación de entrega para el pedido: {}", pedidoId);
-        pedidoInputPort.marcarPedidoEntregado(pedidoId);
+    public void escucharEnvioEnRuta(PedidoEnviadoEventDto eventDto) {
+        log.info("Recibida notificación de entrega para el pedido: {}", eventDto.pedidoId());
+        pedidoInputPort.marcarPedidoEntregado(eventDto.pedidoId());
     }
 }

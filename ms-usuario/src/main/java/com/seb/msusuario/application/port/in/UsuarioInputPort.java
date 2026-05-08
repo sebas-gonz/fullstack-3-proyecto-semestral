@@ -1,16 +1,19 @@
 package com.seb.msusuario.application.port.in;
 
+import com.seb.msusuario.application.port.in.command.CrearUsuarioCommand;
+import com.seb.msusuario.domain.model.Usuario;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioRequest;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface UsuarioInputPort {
-    UsuarioResponse crearUsuario(UsuarioRequest usuarioRequest);
-    void eliminarUsuario(String id);
-    UsuarioResponse obtenerUsuarioPorId(String id);
+    Usuario crearUsuario(CrearUsuarioCommand command);
+    void eliminarUsuario(UUID id);
+    Usuario obtenerUsuarioPorId(UUID id);
 
-    UsuarioResponse actualizarUsuario(String id, UsuarioRequest usuarioRequest);
+    Usuario actualizarUsuario(UUID id, CrearUsuarioCommand command);
 
-    List<UsuarioResponse> obtenerTodosUsuarios();
+    List<Usuario> obtenerTodosUsuarios();
 }
