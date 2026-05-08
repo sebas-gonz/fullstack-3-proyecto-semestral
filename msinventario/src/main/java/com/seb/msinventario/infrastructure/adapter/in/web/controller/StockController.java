@@ -1,7 +1,6 @@
 package com.seb.msinventario.infrastructure.adapter.in.web.controller;
 
 import com.seb.msinventario.application.port.in.StockInputPort;
-import com.seb.msinventario.application.port.in.command.mapper.StockCommandMapper;
 import com.seb.msinventario.application.port.in.command.stock.StockInputCommand;
 import com.seb.msinventario.domain.model.Stock;
 import com.seb.msinventario.infrastructure.adapter.in.web.dto.stock.StockWebRequest;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

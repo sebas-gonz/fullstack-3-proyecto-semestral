@@ -7,7 +7,7 @@ import com.seb.msusuario.application.port.out.DireccionOutputPort;
 import com.seb.msusuario.application.port.out.GeocodingOutPutPort;
 import com.seb.msusuario.application.port.out.UsuarioOutputPort;
 import com.seb.msusuario.domain.model.Coordenadas;
-import com.seb.msusuario.domain.model.Direccion;
+import com.seb.msusuario.domain.model.Ubicacion;
 import com.seb.msusuario.domain.model.Usuario;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.direccion.DireccionRequest;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.direccion.DireccionResponse;
@@ -33,7 +33,7 @@ public class DireccionService implements DireccionInputPort {
         }
         String lugar = String.format("%s %s %s %s", request.calle(),request.numero(),request.ciudad(),request.pais());
         Coordenadas coordenadas = geocodingOutPutPort.obtenerCoordenadas(lugar);
-        Direccion direccion = Direccion.builder()
+        Ubicacion ubicacion = Ubicacion.builder()
                 .calle(request.calle())
                 .numero(request.numero())
                 .ciudad(request.ciudad())
@@ -42,9 +42,9 @@ public class DireccionService implements DireccionInputPort {
                 .longitude(coordenadas.getLongitude())
                 .build();
 
-        usuarioOptional.get().getDirecciones().add(direccion);
+        usuarioOptional.get().getDirecciones().add(ubicacion);
         usuarioOutputPort.guardarUsuario(usuarioOptional.get());
-        return direccionDtoMapper.toResponse(direccion);
+        return direccionDtoMapper.toResponse(ubicacion);
     }
     @Override
     public DireccionResponse actualizarDireccion(String usuarioId, String direccionId, DireccionRequest request) {
@@ -52,19 +52,19 @@ public class DireccionService implements DireccionInputPort {
         if (usuarioOptional.isEmpty()) {
             throw new UserNotFoundException(usuarioId);
         }
-        List<Direccion> direccionesUsuario = usuarioOptional.get().getDirecciones();
-        Direccion direccion = direccionesUsuario.stream().filter(d -> d.getId().equals(direccionId)).findFirst()
+        List<Ubicacion> direccionesUsuario = usuarioOptional.get().getDirecciones();
+        Ubicacion ubicacion = direccionesUsuario.stream().filter(d -> d.getId().equals(direccionId)).findFirst()
                 .orElseThrow(() -> new AddressNotFoundException(direccionId));
         String lugar = String.format("%s %s %s %s", request.calle(),request.numero(),request.ciudad(),request.pais());
         Coordenadas coordenadas = geocodingOutPutPort.obtenerCoordenadas(lugar);
-        direccion.setCalle(request.calle());
-        direccion.setNumero(request.numero());
-        direccion.setCiudad(request.ciudad());
-        direccion.setPais(request.pais());
-        direccion.setLatitude(coordenadas.getLatitude());
-        direccion.setLongitude(coordenadas.getLongitude());
+        ubicacion.setCalle(request.calle());
+        ubicacion.setNumero(request.numero());
+        ubicacion.setCiudad(request.ciudad());
+        ubicacion.setPais(request.pais());
+        ubicacion.setLatitude(coordenadas.getLatitude());
+        ubicacion.setLongitude(coordenadas.getLongitude());
         usuarioOutputPort.guardarUsuario(usuarioOptional.get());
-        return direccionDtoMapper.toResponse(direccion);
+        return direccionDtoMapper.toResponse(ubicacion);
     }
 
     @Override
@@ -73,14 +73,14 @@ public class DireccionService implements DireccionInputPort {
         if (usuarioOptional.isEmpty()) {
             throw new UserNotFoundException(usuarioId);
         }
-        List<Direccion> direccionesUsuario = usuarioOptional.get().getDirecciones();
+        List<Ubicacion> direccionesUsuario = usuarioOptional.get().getDirecciones();
         direccionesUsuario.removeIf(d -> d.getId().equals(direccionId));
         usuarioOutputPort.guardarUsuario(usuarioOptional.get());
     }
 
     @Override
     public DireccionResponse obtenerDireccionPorId(String direccionId) {
-        Optional<Direccion> direccionOptional = direccionOutputPort.obtenerDireccionPorId(direccionId);
+        Optional<Ubicacion> direccionOptional = direccionOutputPort.obtenerDireccionPorId(direccionId);
         if (direccionOptional.isEmpty()) {
             throw new AddressNotFoundException(direccionId);
         }
@@ -89,7 +89,7 @@ public class DireccionService implements DireccionInputPort {
 
     @Override
     public List<DireccionResponse> obtenerTodasDirecciones() {
-        List<Direccion> direcciones =  direccionOutputPort.obtenerTodasDirecciones();
+        List<Ubicacion> direcciones =  direccionOutputPort.obtenerTodasDirecciones();
         return direccionDtoMapper.toResponseList(direcciones);
     }
 
@@ -100,7 +100,7 @@ public class DireccionService implements DireccionInputPort {
         if (usuarioOptional.isEmpty()) {
             throw new UserNotFoundException(usuarioId);
         }
-        List<Direccion> direccionesUsuario = usuarioOptional.get().getDirecciones();
+        List<Ubicacion> direccionesUsuario = usuarioOptional.get().getDirecciones();
         return direccionDtoMapper.toResponseList(direccionesUsuario);
     }
 

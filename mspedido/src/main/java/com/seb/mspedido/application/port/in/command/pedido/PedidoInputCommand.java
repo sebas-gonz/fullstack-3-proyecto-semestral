@@ -6,6 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 public record PedidoInputCommand(UUID usuarioId,
-                                 UbicacionInputCommand ubicacionDestino,
+                                 UbicacionInputCommand destino,
                                  List<DetalleInputCommand> detalles) {
 }

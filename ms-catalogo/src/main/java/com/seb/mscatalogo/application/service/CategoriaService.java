@@ -2,7 +2,7 @@ package com.seb.mscatalogo.application.service;
 
 import com.seb.mscatalogo.application.exception.CategoryNotFoundException;
 import com.seb.mscatalogo.application.port.in.CategoriaInputPort;
-import com.seb.mscatalogo.application.port.in.command.CategoriaWebRequestCommand;
+import com.seb.mscatalogo.application.port.in.command.categoria.CategoriaWebRequestCommand;
 import com.seb.mscatalogo.application.port.out.CategoriaOutputPort;
 import com.seb.mscatalogo.domain.model.Categoria;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.mapper.CategoriaWebMapper;

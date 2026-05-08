@@ -1,6 +1,5 @@
 package com.seb.msinventario.domain.model;
 
-import com.seb.msinventario.infrastructure.adapter.out.persistence.entity.InventarioEntity;
 import lombok.*;
 
 import java.time.Instant;
@@ -10,8 +9,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Stock {
-    @Setter(AccessLevel.NONE) @Builder.Default
+    @Builder.Default
     private UUID stockId =  UUID.randomUUID();
+    private UUID inventarioId;
     private UUID productoId;
     private String lote;
     private Integer cantidad;

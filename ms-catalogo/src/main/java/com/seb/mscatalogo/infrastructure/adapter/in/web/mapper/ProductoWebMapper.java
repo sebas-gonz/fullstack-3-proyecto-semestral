@@ -1,14 +1,13 @@
 package com.seb.mscatalogo.infrastructure.adapter.in.web.mapper;
 
-import com.seb.mscatalogo.application.port.in.command.CategoriaProductoWebRequestCommand;
-import com.seb.mscatalogo.application.port.in.command.ProductoWebRequestCommand;
+import com.seb.mscatalogo.application.port.in.command.categoria.CategoriaProductoWebRequestCommand;
+import com.seb.mscatalogo.application.port.in.command.producto.ProductoWebRequestCommand;
 import com.seb.mscatalogo.domain.model.Producto;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.Producto.CategoriaProductoWebRequest;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.Producto.ProductoWebRequest;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.Producto.ProductoWebResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 

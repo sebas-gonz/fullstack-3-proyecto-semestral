@@ -2,10 +2,10 @@ package com.seb.msinventario.infrastructure.adapter.in.web.controller;
 
 import com.seb.msinventario.application.port.in.InventarioInputPort;
 import com.seb.msinventario.application.port.in.command.inventario.InventarioInputCommand;
-import com.seb.msinventario.application.port.in.command.mapper.InventarioCommandMapper;
 import com.seb.msinventario.domain.model.Inventario;
 import com.seb.msinventario.infrastructure.adapter.in.web.dto.inventario.InventarioWebRequest;
 import com.seb.msinventario.infrastructure.adapter.in.web.dto.inventario.InventarioWebResponse;
+import com.seb.msinventario.infrastructure.adapter.in.web.dto.ubicacion.UbicacionWebResponse;
 import com.seb.msinventario.infrastructure.adapter.in.web.mapper.InventarioWebMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class InventarioController {
     private final InventarioInputPort inventarioInputPort;
-    private final InventarioCommandMapper inventarioCommandMapper;
     private final InventarioWebMapper inventarioWebMapper;
     @GetMapping
     public ResponseEntity<List<InventarioWebResponse>> findAll() {
@@ -36,17 +35,23 @@ public class InventarioController {
         InventarioWebResponse inventarioWebResponse = inventarioWebMapper.toResponse(inventario);
         return ResponseEntity.ok().body(inventarioWebResponse);
     }
+    @GetMapping("/{id}/ubicacion")
+    public ResponseEntity<UbicacionWebResponse> obtenerUbicacion(@PathVariable UUID id) {
+        Inventario inventario = inventarioInputPort.obtenerInventario(id);
+        UbicacionWebResponse ubicacionWebResponse = inventarioWebMapper.toResponse(inventario).ubicacion();
+        return ResponseEntity.ok().body(ubicacionWebResponse);
+    }
     @PostMapping
     public ResponseEntity<InventarioWebResponse> create(@Valid  @RequestBody InventarioWebRequest inventarioWebRequest) {
-        InventarioInputCommand inventarioInputCommand = inventarioCommandMapper.toCommand(inventarioWebRequest);
-        Inventario inventario = inventarioInputPort.guardarInventario(inventarioCommandMapper.toDomain(inventarioInputCommand));
+        InventarioInputCommand inventarioInputCommand = inventarioWebMapper.toCommand(inventarioWebRequest);
+        Inventario inventario = inventarioInputPort.guardarInventario(inventarioInputCommand);
         InventarioWebResponse inventarioWebResponse = inventarioWebMapper.toResponse(inventario);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(inventario.getInventarioId()).toUri();
         return ResponseEntity.created(location).body(inventarioWebResponse);
     }
     @PutMapping("/{id}")
     public ResponseEntity<InventarioWebResponse> update(@PathVariable UUID id,@Valid @RequestBody InventarioWebRequest inventarioWebRequest) {
-        InventarioInputCommand inventarioInputCommand = inventarioCommandMapper.toCommand(inventarioWebRequest);
+        InventarioInputCommand inventarioInputCommand = inventarioWebMapper.toCommand(inventarioWebRequest);
         Inventario inventario = inventarioInputPort.actualizarInventario(id,inventarioInputCommand);
         InventarioWebResponse inventarioWebResponse = inventarioWebMapper.toResponse(inventario);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(inventario.getInventarioId()).toUri();

@@ -1,5 +1,6 @@
 package com.seb.msinventario.application.port.in;
 
+import com.seb.msinventario.application.port.in.command.stock.DescontarStockCommand;
 import com.seb.msinventario.application.port.in.command.stock.StockInputCommand;
 import com.seb.msinventario.domain.model.Stock;
 

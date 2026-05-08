@@ -1,6 +1,6 @@
 package com.seb.msusuario.infrastructure.adapter.in.web.mapper;
 
-import com.seb.msusuario.domain.model.Direccion;
+import com.seb.msusuario.domain.model.Ubicacion;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.direccion.DireccionRequest;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.direccion.DireccionResponse;
 
@@ -17,9 +17,9 @@ public interface DireccionDtoMapper{
     @Mapping(target = "fechaModificacion", ignore = true)
     @Mapping(target = "latitude", ignore = true)
     @Mapping(target = "longitude", ignore = true)
-    Direccion toDomain(DireccionRequest direccionRequest);
-    DireccionResponse toResponse(Direccion direccion);
-    List<DireccionResponse> toResponseList(List<Direccion> direcciones);
-    List<Direccion> toDomainList(List<DireccionResponse> direccionResponses);
+    Ubicacion toDomain(DireccionRequest direccionRequest);
+    DireccionResponse toResponse(Ubicacion ubicacion);
+    List<DireccionResponse> toResponseList(List<Ubicacion> direcciones);
+    List<Ubicacion> toDomainList(List<DireccionResponse> direccionResponses);
 
 }

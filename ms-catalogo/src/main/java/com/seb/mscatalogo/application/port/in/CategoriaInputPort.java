@@ -1,6 +1,6 @@
 package com.seb.mscatalogo.application.port.in;
 
-import com.seb.mscatalogo.application.port.in.command.CategoriaWebRequestCommand;
+import com.seb.mscatalogo.application.port.in.command.categoria.CategoriaWebRequestCommand;
 import com.seb.mscatalogo.domain.model.Categoria;
 
 import java.util.List;

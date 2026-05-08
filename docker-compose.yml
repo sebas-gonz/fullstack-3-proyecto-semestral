@@ -1,56 +1,28 @@
 services:
-  postgres-db:
-    image: postgres:15-alpine
-    container_name: ms-postgres
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
     environment:
-      POSTGRES_DB: ms-db
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: root
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,INTERNAL://:9094
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,INTERNAL://kafka:9094
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@localhost:9093
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
 
-
-  ms-usuario:
-    build:
-      context: ./ms-usuario
-      dockerfile: Dockerfile
-    container_name: ms-usuario-app
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
     ports:
-      - "8080:8080"
-    services:
-  postgres-db:
-    image: postgres:15-alpine
-    container_name: ms-postgres
+      - "8090:8080"
     environment:
-      POSTGRES_DB: ms-db
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: root
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-
-  ms-usuario:
-    build:
-      context: ./ms-usuario
-      dockerfile: Dockerfile
-    container_name: ms-usuario-app
-    ports:
-      - "8080:8080"
-    environment:
-      - DB_URL=jdbc:postgresql://postgres-db:5432/ms-db
-      - USER_NAME=admin
-      - PASSWORD=root
-      - GEOCODING_KEY= ${GEOCODINGKEY}
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI = https://dev-up1zt2lh8orqmjdq.us.auth0.com/
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_AUDIENCES = https://api.ms-usuarios.com
+      - KAFKA_CLUSTERS_0_NAME=kafka
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9094
     depends_on:
-      - postgres-db
-
-volumes:
-  postgres_data:
-    depends_on:
-      - postgres-db
+      - kafka

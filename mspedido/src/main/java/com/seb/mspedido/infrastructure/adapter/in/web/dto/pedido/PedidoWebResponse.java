@@ -12,8 +12,8 @@ import java.util.UUID;
 
 public record PedidoWebResponse(UUID pedidoId,
                                 UUID usuarioId,
-                                UbicacionWebResponse ubicacionOrigen,
-                                UbicacionWebResponse ubicacionDestino,
+                                UbicacionWebResponse origen,
+                                UbicacionWebResponse destino,
                                 Estado estado,
                                 @JsonFormat(shape = JsonFormat.Shape.STRING)
                                 Instant fechaRegistro,

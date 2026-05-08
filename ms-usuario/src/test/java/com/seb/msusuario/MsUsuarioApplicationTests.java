@@ -1,9 +1,7 @@
 package com.seb.msusuario;
 
 import com.seb.msusuario.domain.model.RolUsuario;
-import com.seb.msusuario.domain.model.Usuario;
-import com.seb.msusuario.infrastructure.adapter.out.persistence.UsuarioPersistenceAdapter;
-import com.seb.msusuario.infrastructure.adapter.out.persistence.entity.DireccionEntity;
+import com.seb.msusuario.infrastructure.adapter.out.persistence.entity.UbicacionEntity;
 import com.seb.msusuario.infrastructure.adapter.out.persistence.entity.UsuarioEntity;
 import com.seb.msusuario.infrastructure.adapter.out.persistence.mapper.UsuarioMapper;
 import com.seb.msusuario.infrastructure.adapter.out.persistence.repository.DireccionRepository;
@@ -60,7 +58,7 @@ class MsUsuarioApplicationTests {
         }
         IntStream.range(0, usuarios.size()).forEach(i ->{
             UsuarioEntity usuarioEntity = usuarios.get(i);
-            var direccionEntity = DireccionEntity.builder()
+            var direccionEntity = UbicacionEntity.builder()
                     .calle("Moneda")
                     .ciudad("Santiago")
                     .numero(String.valueOf(1202))

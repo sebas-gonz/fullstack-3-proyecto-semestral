@@ -13,13 +13,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Pedido {
-    @Setter(AccessLevel.NONE) @Builder.Default
+    @Builder.Default
     private UUID pedidoId = UUID.randomUUID();
     private UUID usuarioId;
-    private Ubicacion ubicacionOrigen;
-    private Ubicacion ubicacionDestino;
+    private Ubicacion origen;
+    private Ubicacion destino;
     @Builder.Default
-    private Estado estado = Estado.PENDENTE;
+    private Estado estado = Estado.PENDIENTE;
     private Instant fechaRegistro;
     private Instant fechaModificacion;
     private Instant fechaEntrega;

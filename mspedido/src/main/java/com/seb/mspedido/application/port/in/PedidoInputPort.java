@@ -1,6 +1,7 @@
 package com.seb.mspedido.application.port.in;
 
 import com.seb.mspedido.application.port.in.command.pedido.PedidoInputCommand;
+import com.seb.mspedido.application.port.in.command.stock.StockDescontadoCommand;
 import com.seb.mspedido.domain.model.Pedido;
 
 import java.util.List;
@@ -13,4 +14,8 @@ public interface PedidoInputPort {
     Pedido actualizarPedido(UUID pedidoId,PedidoInputCommand pedidoInputCommand);
     List<Pedido> obtenerPedidos();
     void eliminarPedido(UUID pedidoId);
+    void confirmarStockYPrepararPedido(StockDescontadoCommand command);
+    void marcarPedidoEnviado(UUID pedidoId);
+
+    void marcarPedidoEntregado(UUID pedidoId);
 }

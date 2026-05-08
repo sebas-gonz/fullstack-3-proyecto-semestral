@@ -30,7 +30,7 @@ CREATE TABLE usuario_aud (
     CONSTRAINT fk_usuarios_aud_revinfo FOREIGN KEY (rev) REFERENCES revinfo (rev)
 );
 
-CREATE TABLE direccion (
+CREATE TABLE ubicacion (
    id VARCHAR(255) PRIMARY KEY,
    calle VARCHAR(255) NOT NULL ,
    numero VARCHAR(255) NOT NULL ,

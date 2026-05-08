@@ -16,8 +16,8 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING )
 public interface InventarioWebMapper {
-    Inventario toDomain(InventarioInputCommand inventarioInputCommand);
-    Ubicacion toDomain(UbicacionInputCommand ubicacionInputCommand);
+    InventarioInputCommand toCommand(InventarioWebRequest inventarioWebRequest);
+    UbicacionInputCommand toDomain(UbicacionWebRequest ubicacionWebRequest);
     InventarioWebResponse toResponse(Inventario inventario);
     UbicacionWebResponse toResponse(Ubicacion ubicacion);
 

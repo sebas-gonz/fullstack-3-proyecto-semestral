@@ -1,6 +1,7 @@
 package com.seb.msinventario.application.port.in;
 
 import com.seb.msinventario.application.port.in.command.inventario.InventarioInputCommand;
+import com.seb.msinventario.application.port.in.command.stock.DescontarStockCommand;
 import com.seb.msinventario.domain.model.Inventario;
 
 import java.util.List;
@@ -13,5 +14,7 @@ public interface InventarioInputPort {
     Inventario obtenerInventario(UUID inventarioId);
     List<Inventario> obtenerInventarios();
     void eliminarInventario(UUID inventarioId);
+    void procesarDescuentoStock(DescontarStockCommand  descontarStockCommand);
+
 
 }

@@ -1,7 +1,6 @@
 package com.seb.mscatalogo.infrastructure.adapter.in.web.controller;
 import com.seb.mscatalogo.application.port.in.CategoriaInputPort;
-import com.seb.mscatalogo.application.port.in.command.CategoriaWebRequestCommand;
-import com.seb.mscatalogo.domain.model.Categoria;
+import com.seb.mscatalogo.application.port.in.command.categoria.CategoriaWebRequestCommand;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.categoria.CategoriaWebRequest;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.categoria.CategoriaWebResponse;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.mapper.CategoriaWebMapper;
@@ -32,7 +31,7 @@ public class CategoriaController {
     public ResponseEntity<CategoriaWebResponse> create(@Valid @RequestBody CategoriaWebRequest categoriaWebRequest) {
         CategoriaWebRequestCommand categoriaCommand = categoriaWebMapper.toCommand(categoriaWebRequest);
         CategoriaWebResponse categoriaWebResponse = categoriaWebMapper.toResponse(categoriaInputPort.crearCategoria(categoriaCommand));
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(categoriaWebResponse.id()).toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(categoriaWebResponse.categoriaId()).toUri();
         return ResponseEntity.created(location).body(categoriaWebResponse);
     }
     @GetMapping("/{id}")

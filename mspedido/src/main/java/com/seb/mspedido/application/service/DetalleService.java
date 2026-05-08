@@ -26,6 +26,7 @@ public class DetalleService implements DetalleInputPort {
         );
         Detalle detalle = detalleDomainMapper.toDomain(detalleInputCommand);
         pedido.getDetalles().add(detalle);
+        pedidoOutputPort.guardarPedido(pedido);
         return pedido.getDetalles().stream().filter(d -> d.getDetalleId().equals(detalle.getDetalleId()))
                 .findFirst().orElseThrow(
                 () -> new RuntimeException("Detalle no encontrado")

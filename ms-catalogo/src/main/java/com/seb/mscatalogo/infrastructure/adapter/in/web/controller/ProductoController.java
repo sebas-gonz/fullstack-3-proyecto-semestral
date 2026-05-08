@@ -1,9 +1,7 @@
 package com.seb.mscatalogo.infrastructure.adapter.in.web.controller;
 
 import com.seb.mscatalogo.application.port.in.ProductoInputPort;
-import com.seb.mscatalogo.application.port.in.command.CategoriaProductoWebRequestCommand;
-import com.seb.mscatalogo.application.port.in.command.ProductoWebRequestCommand;
-import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.Producto.CategoriaProductoWebRequest;
+import com.seb.mscatalogo.application.port.in.command.producto.ProductoWebRequestCommand;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.Producto.ProductoWebRequest;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.Producto.ProductoWebResponse;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.mapper.ProductoWebMapper;
@@ -37,7 +35,7 @@ public class ProductoController {
         ProductoWebResponse productoWebResponse = productoWebMapper
                 .toWebResponse(productoInputPort.crearProducto(id, productoWebRequestCommand));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(productoWebResponse.id()).toUri();
+                .buildAndExpand(productoWebResponse.productoId()).toUri();
         return ResponseEntity.created(location).body(productoWebResponse);
     }
     @PutMapping("/{productoid}")

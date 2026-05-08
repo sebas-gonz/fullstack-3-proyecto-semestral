@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
+
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,13 +16,14 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Usuario {
     @Builder.Default
-    private String id = UUID.randomUUID().toString();
+    private UUID usuarioId = UUID.randomUUID();
     private String nombre;
     private String apellido;
     private String email;
     private String idAuth0;
     private RolUsuario rol;
-    private LocalDateTime fechaRegistro;
-    private LocalDateTime fechaModificacion;
-    private List<Direccion> direcciones;
+    private Instant fechaRegistro;
+    private Instant fechaModificacion;
+    @Builder.Default
+    private List<Ubicacion> direcciones = new ArrayList<>();
 }

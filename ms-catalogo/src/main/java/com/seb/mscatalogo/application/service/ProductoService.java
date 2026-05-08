@@ -2,13 +2,17 @@ package com.seb.mscatalogo.application.service;
 
 import com.seb.mscatalogo.application.exception.CategoryNotFoundException;
 import com.seb.mscatalogo.application.exception.ProductoNotFoundException;
+import com.seb.mscatalogo.application.mapper.ProductoDomainMapper;
 import com.seb.mscatalogo.application.port.in.ProductoInputPort;
-import com.seb.mscatalogo.application.port.in.command.CategoriaProductoWebRequestCommand;
-import com.seb.mscatalogo.application.port.in.command.ProductoWebRequestCommand;
+import com.seb.mscatalogo.application.port.in.command.categoria.CategoriaProductoWebRequestCommand;
+import com.seb.mscatalogo.application.port.in.command.producto.ActualizarStockProductoCommand;
+import com.seb.mscatalogo.application.port.in.command.producto.ProductoWebRequestCommand;
 import com.seb.mscatalogo.application.port.out.CategoriaOutputPort;
 import com.seb.mscatalogo.application.port.out.ProductoOutputPort;
+import com.seb.mscatalogo.application.port.out.ProductoPublisherPort;
 import com.seb.mscatalogo.domain.model.Categoria;
 import com.seb.mscatalogo.domain.model.Producto;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,21 +26,26 @@ import java.util.UUID;
 public class ProductoService implements ProductoInputPort {
     private final ProductoOutputPort productoOutputPort;
     private final CategoriaOutputPort categoriaOutputPort;
+    private final ProductoDomainMapper productoDomainMapper;
+    private final ProductoPublisherPort  productoPublisherPort;
     @Override
+    @Transactional
     public Producto crearProducto(UUID categoriaId, ProductoWebRequestCommand  productoWebRequestCommand) {
         Categoria categoria = categoriaOutputPort.obtenerCategoriaPorId(categoriaId)
                 .orElseThrow(() -> new CategoryNotFoundException(categoriaId));
-        Producto nuevo = Producto.builder().sku(productoWebRequestCommand.sku())
-                        .nombre(productoWebRequestCommand.nombre())
-                        .descripcion(productoWebRequestCommand.descripcion())
-                        .precioBase(productoWebRequestCommand.precioBase())
-                        .categoria(categoria).build();
-        Producto guardado = productoOutputPort.guardarProducto(nuevo);
-        categoria.getProductos().add(guardado);
-        return guardado;
+        Producto producto = productoDomainMapper.toDomain(productoWebRequestCommand);
+        producto.setCategoriaId(categoria.getCategoriaId());
+        categoria.getProductos().add(producto);
+        productoPublisherPort.publicarProductoActualizado(producto);
+        return categoriaOutputPort.guardarCategoria(categoria).getProductos().stream()
+                .filter(p -> p.getProductoId().equals(producto.getProductoId())).findFirst()
+                .orElseThrow(
+                        () -> new ProductoNotFoundException(producto.getProductoId())
+                );
     }
 
     @Override
+    @Transactional
     public Producto actualizarProducto(UUID productoId, ProductoWebRequestCommand productoWebRequestCommand) {
         Producto producto = productoOutputPort.obtenerProductoPorId(productoId).orElseThrow(
                 () -> new ProductoNotFoundException(productoId)
@@ -44,7 +53,9 @@ public class ProductoService implements ProductoInputPort {
         producto.setNombre(productoWebRequestCommand.nombre());
         producto.setDescripcion(productoWebRequestCommand.descripcion());
         producto.setPrecioBase(productoWebRequestCommand.precioBase());
-        return productoOutputPort.guardarProducto(producto);
+        Producto guardado = productoOutputPort.guardarProducto(producto);
+        productoPublisherPort.publicarProductoActualizado(guardado);
+        return guardado;
     }
 
     @Override
@@ -79,7 +90,15 @@ public class ProductoService implements ProductoInputPort {
                 .orElseThrow(() -> new ProductoNotFoundException(categoriaProductoWebRequestCommand.productoId()));
         Categoria categoria = categoriaOutputPort.obtenerCategoriaPorId(categoriaProductoWebRequestCommand.categoriaId())
                 .orElseThrow(() -> new CategoryNotFoundException(categoriaProductoWebRequestCommand.categoriaId()));
-        producto.setCategoria(categoria);
+        producto.setCategoriaId(categoria.getCategoriaId());
         return productoOutputPort.guardarProducto(producto);
+    }
+
+    @Override
+    public void actualizarCantidadProducto(ActualizarStockProductoCommand ActualizarStockProductoCommand) {
+        Producto producto = productoOutputPort.obtenerProductoPorId(ActualizarStockProductoCommand.productoId())
+                .orElseThrow(() -> new ProductoNotFoundException(ActualizarStockProductoCommand.productoId()));
+        producto.setCantidadTotal(ActualizarStockProductoCommand.cantidadTotal());
+        productoOutputPort.guardarProducto(producto);
     }
 }

@@ -1,7 +1,8 @@
 package com.seb.mscatalogo.application.port.in;
 
-import com.seb.mscatalogo.application.port.in.command.CategoriaProductoWebRequestCommand;
-import com.seb.mscatalogo.application.port.in.command.ProductoWebRequestCommand;
+import com.seb.mscatalogo.application.port.in.command.categoria.CategoriaProductoWebRequestCommand;
+import com.seb.mscatalogo.application.port.in.command.producto.ActualizarStockProductoCommand;
+import com.seb.mscatalogo.application.port.in.command.producto.ProductoWebRequestCommand;
 import com.seb.mscatalogo.domain.model.Producto;
 
 import java.util.List;
@@ -15,5 +16,6 @@ public interface ProductoInputPort {
     List<Producto> obtenerProductoPorCategoriaId(UUID categoriaId);
     void eliminarProducto(UUID productoId);
     Producto cambiarCategoria(CategoriaProductoWebRequestCommand categoriaProductoWebRequestCommand);
+    void actualizarCantidadProducto(ActualizarStockProductoCommand ActualizarStockProductoCommand);
 
 }

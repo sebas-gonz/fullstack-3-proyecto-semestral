@@ -1,4 +1,0 @@
-package com.seb.mscatalogo.application.port.in.command;
-
-public record CategoriaWebRequestCommand(String nombre, String descripcion) {
-}

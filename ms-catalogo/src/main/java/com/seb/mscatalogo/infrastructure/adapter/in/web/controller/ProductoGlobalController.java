@@ -1,7 +1,7 @@
 package com.seb.mscatalogo.infrastructure.adapter.in.web.controller;
 
 import com.seb.mscatalogo.application.port.in.ProductoInputPort;
-import com.seb.mscatalogo.application.port.in.command.CategoriaProductoWebRequestCommand;
+import com.seb.mscatalogo.application.port.in.command.categoria.CategoriaProductoWebRequestCommand;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.Producto.CategoriaProductoWebRequest;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.Producto.ProductoWebResponse;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.mapper.ProductoWebMapper;
