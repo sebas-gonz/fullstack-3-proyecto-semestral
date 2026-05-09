@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/categoria/{id}/producto")
+@RequestMapping("/api/v1/categorias/{id}/producto")
 @AllArgsConstructor
 public class ProductoController {
     private final ProductoInputPort  productoInputPort;

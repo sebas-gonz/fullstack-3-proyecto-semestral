@@ -17,19 +17,19 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/usuarios")
 @RequiredArgsConstructor
 public class UsuarioController {
     private final UsuarioInputPort usuarioInputPort;
     private final UsuarioWebMapper usuarioWebMapper;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<UsuarioResponse>> findAll() {
         List<UsuarioResponse> usuarioResponseList = usuarioWebMapper.toResponseList(usuarioInputPort.obtenerTodosUsuarios());
         return ResponseEntity.ok().body(usuarioResponseList);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<UsuarioResponse> create(@RequestBody @Valid UsuarioRequest usuarioRequest) {
         CrearUsuarioCommand  command = usuarioWebMapper.toCommand(usuarioRequest);
         UsuarioResponse usuarioResponse = usuarioWebMapper.toResponse(usuarioInputPort.crearUsuario(command));
@@ -43,13 +43,13 @@ public class UsuarioController {
         UsuarioResponse usuario = usuarioWebMapper.toResponse(usuarioInputPort.obtenerUsuarioPorId(id));
         return ResponseEntity.ok().body(usuario);
     }
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponse> update(@PathVariable UUID id,@RequestBody @Valid UsuarioRequest usuarioRequest) {
         CrearUsuarioCommand  command = usuarioWebMapper.toCommand(usuarioRequest);
         UsuarioResponse usuarioResponse = usuarioWebMapper.toResponse(usuarioInputPort.actualizarUsuario(id, command));
         return ResponseEntity.accepted().body(usuarioResponse);
     }
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable UUID id){
         usuarioInputPort.eliminarUsuario(id);
         return ResponseEntity.noContent().build();

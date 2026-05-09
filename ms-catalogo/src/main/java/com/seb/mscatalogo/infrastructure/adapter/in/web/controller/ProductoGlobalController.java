@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/vi/producto")
+@RequestMapping("/api/v1/producto")
 @AllArgsConstructor
 public class ProductoGlobalController {
     private ProductoInputPort productoInputPort;

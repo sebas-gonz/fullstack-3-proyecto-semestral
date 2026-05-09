@@ -17,7 +17,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/user/{id}/direccion")
+@RequestMapping("/api/v1/usuarios/{id}/ubicaciones")
 @AllArgsConstructor
 public class DireccionController {
     private final DireccionInputPort direccionInputPort;

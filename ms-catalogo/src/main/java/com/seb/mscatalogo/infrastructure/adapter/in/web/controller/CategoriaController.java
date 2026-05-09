@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/categoria")
+@RequestMapping("/api/v1/categorias")
 @AllArgsConstructor
 public class CategoriaController {
     private final CategoriaInputPort categoriaInputPort;

@@ -1,4 +1,4 @@
-package com.seb.mspedido.infrastructure.config;
+package com.seb.mspedido.infrastructure.config.cache;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
