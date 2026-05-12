@@ -63,3 +63,6 @@ ehthumbs_vista.db
 application-local.yml
 application-local.properties
 application-secret.yml
+
+**/node_modules/
+**/dist/
