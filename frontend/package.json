@@ -10,8 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.16.2",
+    "@react-google-maps/api": "^2.20.8",
+    "axios": "^1.16.0",
+    "bootstrap": "^5.3.8",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.15.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

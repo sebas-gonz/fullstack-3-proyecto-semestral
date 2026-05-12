@@ -13,6 +13,8 @@ import com.seb.mspedido.domain.model.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -99,8 +101,8 @@ public class PedidoService implements PedidoInputPort {
     }
 
     @Override
-    public List<Pedido> obtenerPedidos() {
-        return pedidoOutputPort.obtenerPedidos();
+    public Page<Pedido> obtenerPedidos(Pageable pageable) {
+        return pedidoOutputPort.obtenerPedidos(pageable);
     }
 
     @Override
@@ -140,5 +142,10 @@ public class PedidoService implements PedidoInputPort {
         pedido.setEstado(Estado.ENTREGADO);
         pedido.setFechaEntrega(Instant.now());
         pedidoOutputPort.guardarPedido(pedido);
+    }
+
+    @Override
+    public List<Pedido> obtenerPedidosPorUsuario(UUID idUsuario) {
+        return pedidoOutputPort.obtenerPedidosPorUsuario(idUsuario);
     }
 }

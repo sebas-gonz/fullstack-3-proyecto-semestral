@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.IntStream;
 @Slf4j
@@ -48,7 +49,7 @@ class MsTemplateApplicationTests {
                     .nombre("producto " + i)
                     .descripcion("descripcion" + i)
                     .sku("sku" + i)
-                    .precioBase((double) i)
+                    .precioBase(BigDecimal.valueOf(i))
                     .categoria(categorias.get(i))
                     .build();
             productoRepository.save(productoEntity);

@@ -101,4 +101,13 @@ public class ProductoService implements ProductoInputPort {
         producto.setCantidadTotal(ActualizarStockProductoCommand.cantidadTotal());
         productoOutputPort.guardarProducto(producto);
     }
+
+    @Override
+    public List<Producto> obtenerProductosDisponibles(UUID categoriaId) {
+        Categoria categoria = categoriaOutputPort.obtenerCategoriaPorId(categoriaId)
+                .orElseThrow(() -> new CategoryNotFoundException(categoriaId));
+
+        return categoria.getProductos().stream()
+                .filter(producto -> producto.getCantidadTotal() > 0).toList();
+    }
 }

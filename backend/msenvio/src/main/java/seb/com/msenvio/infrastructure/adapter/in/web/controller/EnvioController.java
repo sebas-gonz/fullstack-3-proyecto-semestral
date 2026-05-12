@@ -1,6 +1,9 @@
 package seb.com.msenvio.infrastructure.adapter.in.web.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import seb.com.msenvio.application.port.in.EnvioInputPort;
@@ -20,14 +23,57 @@ public class EnvioController {
     private final EnvioWebMapper  envioWebMapper;
 
     @GetMapping("/disponibles")
-    public ResponseEntity<List<EnvioWebResponse>> getAllEnviosDisponibles() {
-        List<EnvioWebResponse> responses = envioWebMapper.toResponseList(envioInputPort.obtenerEnviosDisponibles());
+    public ResponseEntity<Page<EnvioWebResponse>> obtenerTodosLosEnviosDisponibles(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Envio> envioPage = envioInputPort.obtenerEnviosDisponibles(pageable);
+        Page<EnvioWebResponse> responses = envioPage.map(envioWebMapper::toResponse);
+        return ResponseEntity.ok(responses);
+    }
+    @GetMapping("/{repartidorid}/asignados")
+    public ResponseEntity<Page<EnvioWebResponse>> obtenerEnviosAsignados(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @PathVariable UUID repartidorid
+    ) {
+      Pageable pageable = PageRequest.of(page, size);
+      Page<Envio> envioPage = envioInputPort.obtenerEnviosAsignados(repartidorid, pageable);
+      Page<EnvioWebResponse> responses = envioPage.map(envioWebMapper::toResponse);
+      return ResponseEntity.ok(responses);
+    }
+    @GetMapping("/{repartidorid}/enruta")
+    public ResponseEntity<Page<EnvioWebResponse>> obtenerEnviosEnruta(
+            @PathVariable UUID repartidorid,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Envio> envioPage = envioInputPort.obtenerEnviosEnRuta(repartidorid, pageable);
+        Page<EnvioWebResponse>  responses = envioPage.map(envioWebMapper::toResponse);
+        return ResponseEntity.ok(responses);
+    }
+    @GetMapping("/{repartidorid}/entregado")
+    public ResponseEntity<Page<EnvioWebResponse>> obtenerEnviosEntregados(
+            @PathVariable UUID repartidorid,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Envio> envioPage = envioInputPort.obtenerEnviosEntregados(repartidorid, pageable);
+        Page<EnvioWebResponse> responses = envioPage.map(envioWebMapper::toResponse);
         return ResponseEntity.ok(responses);
     }
     @GetMapping
-    public ResponseEntity<List<EnvioWebResponse>> getAllEnvios() {
-        List<EnvioWebResponse> envios = envioWebMapper.toResponseList(envioInputPort.obtenerTodosLosEnvios());
-        return ResponseEntity.ok(envios);
+    public ResponseEntity<Page<EnvioWebResponse>> obtenerTodosLosEnvios(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Envio> envioPage = envioInputPort.obtenerTodosLosEnvios(pageable);
+        Page<EnvioWebResponse> responses = envioPage.map(envioWebMapper::toResponse);
+        return ResponseEntity.ok(responses);
     }
     @GetMapping("/{id}")
     public ResponseEntity<EnvioWebResponse> getEnvioById(@PathVariable UUID id) {

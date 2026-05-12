@@ -17,5 +17,5 @@ public interface ProductoInputPort {
     void eliminarProducto(UUID productoId);
     Producto cambiarCategoria(CategoriaProductoWebRequestCommand categoriaProductoWebRequestCommand);
     void actualizarCantidadProducto(ActualizarStockProductoCommand ActualizarStockProductoCommand);
-
+    List<Producto> obtenerProductosDisponibles(UUID categoriaId);
 }

@@ -3,6 +3,8 @@ package seb.com.msenvio.application.service;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import seb.com.msenvio.application.mapper.EnvioDomainMapper;
 import seb.com.msenvio.application.port.in.EnvioInputPort;
@@ -12,7 +14,6 @@ import seb.com.msenvio.application.port.out.EnvioOutputPort;
 import seb.com.msenvio.domain.model.Envio;
 import seb.com.msenvio.domain.model.EstadoEnvio;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -59,15 +60,27 @@ public class EnvioService implements EnvioInputPort {
     }
 
     @Override
-    public List<Envio> obtenerEnviosDisponibles() {
-        return envioOutputPort.obtenerEnvios()
-                .stream()
-                .filter(envio -> envio.getEstado().equals(EstadoEnvio.DISPONIBLE))
-                .toList();
+    public Page<Envio> obtenerEnviosDisponibles(Pageable pageable) {
+        return envioOutputPort.obtenerEnviosPorEstado(EstadoEnvio.DISPONIBLE, pageable);
     }
 
     @Override
-    public List<Envio> obtenerTodosLosEnvios() {
-        return envioOutputPort.obtenerEnvios();
+    public Page<Envio> obtenerTodosLosEnvios(Pageable pageable) {
+        return envioOutputPort.obtenerEnvios(pageable);
+    }
+
+    @Override
+    public Page<Envio> obtenerEnviosAsignados(UUID repartidorId, Pageable pageable) {
+        return envioOutputPort.obtenerEnviosPorRepartidor(repartidorId, pageable);
+    }
+
+    @Override
+    public Page<Envio> obtenerEnviosEnRuta(UUID repartidorId, Pageable pageable) {
+        return envioOutputPort.obtenerEnviosPorEstadoYRepartidor(EstadoEnvio.EN_RUTA, repartidorId, pageable);
+    }
+
+    @Override
+    public Page<Envio> obtenerEnviosEntregados(UUID repartidorId, Pageable pageable) {
+        return envioOutputPort.obtenerEnviosPorEstadoYRepartidor(EstadoEnvio.ENTREGADO, repartidorId, pageable);
     }
 }

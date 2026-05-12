@@ -5,6 +5,7 @@ import com.seb.msinventario.application.mapper.InventarioDomainMapper;
 import com.seb.msinventario.application.port.in.InventarioInputPort;
 import com.seb.msinventario.application.port.in.command.inventario.InventarioInputCommand;
 import com.seb.msinventario.application.port.in.command.stock.DescontarStockCommand;
+import com.seb.msinventario.application.port.in.command.stock.ProductoStockCommand;
 import com.seb.msinventario.application.port.out.InventarioEventPublisherPort;
 import com.seb.msinventario.application.port.out.InventarioOutputPort;
 import com.seb.msinventario.application.port.out.StockOutputPort;
@@ -87,8 +88,15 @@ public class InventarioService implements InventarioInputPort {
                 }
             }
             stockOutputPort.guardarStocks(stocks);
+            Integer cantidadTotal = stocks.stream().mapToInt(Stock::getCantidad).sum();
+            inventarioEventPublisherPort.publicarStockTotal(new ProductoStockCommand(pedido.productoId(), cantidadTotal));
         });
         inventarioEventPublisherPort.publicarRespuestaStock(descontarStockCommand.pedidoId(), true);
         ;
+    }
+
+    @Override
+    public List<Inventario> obtenerInventariosPorProducto(UUID productoId) {
+        return inventarioOutputPort.obtenerInventarioPorProducto(productoId);
     }
 }

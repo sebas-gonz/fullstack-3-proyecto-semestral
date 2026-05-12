@@ -45,6 +45,12 @@ public class UsuarioService implements UsuarioInputPort {
     }
 
     @Override
+    public Usuario obtenerUsuarioPorIdAuth0(String id) {
+        return usuarioOutputPort.obtenerUsuarioPorIdAuth0(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    @Override
     public Usuario actualizarUsuario(UUID id,CrearUsuarioCommand command) {
         Usuario existente = usuarioOutputPort.obtenerUsuarioPorId(id).orElseThrow(
                 () -> new UserNotFoundException(id));

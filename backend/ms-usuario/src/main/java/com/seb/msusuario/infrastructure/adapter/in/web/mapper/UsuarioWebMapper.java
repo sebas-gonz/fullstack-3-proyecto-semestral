@@ -6,7 +6,9 @@ import com.seb.msusuario.domain.model.Usuario;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioRequest;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.Mappings;
 
 import java.util.List;
 
@@ -14,5 +16,6 @@ import java.util.List;
 public interface UsuarioWebMapper {
     CrearUsuarioCommand toCommand(UsuarioRequest usuarioRequest);
     UsuarioResponse toResponse(Usuario usuario);
+    @Mapping(target = "direcciones",source = "direcciones")
     List<UsuarioResponse> toResponseList(List<Usuario> usuarios);
 }

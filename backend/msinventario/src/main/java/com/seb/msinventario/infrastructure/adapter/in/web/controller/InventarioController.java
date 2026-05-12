@@ -62,4 +62,9 @@ public class InventarioController {
         inventarioInputPort.eliminarInventario(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/producto/{productoid}")
+    public ResponseEntity<List<InventarioWebResponse>> obtenerInventarioPorProducto(@PathVariable UUID productoid) {
+        List<InventarioWebResponse> responses = inventarioWebMapper.toInventarioResponseList(inventarioInputPort.obtenerInventariosPorProducto(productoid));
+        return ResponseEntity.ok(responses);
+    }
 }

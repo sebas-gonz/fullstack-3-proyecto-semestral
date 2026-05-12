@@ -28,7 +28,11 @@ public class UsuarioController {
         List<UsuarioResponse> usuarioResponseList = usuarioWebMapper.toResponseList(usuarioInputPort.obtenerTodosUsuarios());
         return ResponseEntity.ok().body(usuarioResponseList);
     }
-
+    @GetMapping("/{idauth0}/auth0")
+    public ResponseEntity<UsuarioResponse> obtenerUsuarioPorIdAuth0(@PathVariable String idauth0){
+        UsuarioResponse response = usuarioWebMapper.toResponse(usuarioInputPort.obtenerUsuarioPorIdAuth0(idauth0));
+        return ResponseEntity.ok(response);
+    }
     @PostMapping
     public ResponseEntity<UsuarioResponse> create(@RequestBody @Valid UsuarioRequest usuarioRequest) {
         CrearUsuarioCommand  command = usuarioWebMapper.toCommand(usuarioRequest);

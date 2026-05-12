@@ -1,122 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import {BrowserRouter as Router, Routes, Route, Navigate, useNavigate} from 'react-router-dom';
+import { useAuth } from "./hooks/useAuth.js";
+import { VistaAdmin } from "./vistas/VistaAdmin.jsx";
+import { VistaCliente } from "./vistas/VistaCliente.jsx";
+import { VistaRepartidor } from "./vistas/vistaRepartidor.jsx";
+import { RegistroUsuario } from "./vistas/RegistroUsuario.jsx";
+import { LoginLanding } from "./vistas/LoginLanding.jsx";
+import { Layout } from "./components/Layout.jsx";
+import {useUsuario} from "./hooks/useUsuario.js";
+import {useEffect, useState} from "react";
+const InterceptorAuth0 = ({ children }) => {
+    const { estaAutenticado, idBackend, cargando: cargandoAuth } = useAuth();
+    const { verificarUsuarioPorAuth0 } = useUsuario();
+    const navigate = useNavigate();
+    const [verificandoDB, setVerificandoDB] = useState(true);
 
+    useEffect(() => {
+        const sincronizarConBackend = async () => {
+            if (cargandoAuth || !estaAutenticado){
+              return
+            }
+            try {
+                const usuarioDB = await verificarUsuarioPorAuth0(idBackend);
+
+                if (!usuarioDB) {
+                    setVerificandoDB(false);
+                    navigate('/completar-perfil');
+                } else {
+                    setVerificandoDB(false);
+                }
+            } catch (error) {
+                console.error("Error sincronizando", error);
+                setVerificandoDB(false);
+            }
+        };
+        sincronizarConBackend();
+    }, [estaAutenticado, idBackend, cargandoAuth, verificarUsuarioPorAuth0, navigate]);
+    if (cargandoAuth || verificandoDB) {
+        return <div className="spinner-border text-primary m-5"></div>;
+    }
+    return children;
+};
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    const { usuario, estaAutenticado, cargando } = useAuth();
+    const roles = usuario?.["https://erp-api.com/roles"] || [];
+    if (cargando) {
+        return (
+            <div className="min-vh-100 d-flex justify-content-center align-items-center bg-light">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+        );
+    }
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={!estaAutenticado ? <LoginLanding /> : <Navigate to="/dashboard" />} />
+                <Route path="/completar-perfil" element={<RegistroUsuario />} />
+                <Route path="/dashboard" element={
+                    estaAutenticado ? (
+                        <InterceptorAuth0>
+                            <Layout>
+                                {roles.includes('ADMIN') && <VistaAdmin />}
+                                {roles.includes('USER') && <VistaCliente />}
+                                {roles.includes('DELIVER') && <VistaRepartidor />}
+                            </Layout>
+                        </InterceptorAuth0>
+                    ) : (
+                        <Navigate to="/" />
+                    )
+                } />
+            </Routes>
+        </Router>
+    );
 }
-
-export default App
+export default App;

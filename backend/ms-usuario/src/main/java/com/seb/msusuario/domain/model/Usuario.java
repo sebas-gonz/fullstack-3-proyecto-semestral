@@ -25,5 +25,5 @@ public class Usuario {
     private Instant fechaRegistro;
     private Instant fechaModificacion;
     @Builder.Default
-    private List<Ubicacion> ubicaciones = new ArrayList<>();
+    private List<Ubicacion> direcciones = new ArrayList<>();
 }

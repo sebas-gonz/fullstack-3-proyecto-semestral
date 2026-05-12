@@ -29,7 +29,6 @@ public class DireccionService implements DireccionInputPort {
     private final DireccionWebMapper direccionWebMapper;
     private final DireccionOutputPort direccionOutputPort;
     @Override
-    @Transactional
     public Ubicacion agregarDireccion(UUID usuarioId, CrearUbicacionCommand  command) {
         Usuario usuario = usuarioOutputPort.obtenerUsuarioPorId(usuarioId)
                 .orElseThrow(() -> new UserNotFoundException(usuarioId));
@@ -42,13 +41,11 @@ public class DireccionService implements DireccionInputPort {
                 .pais(command.pais())
                 .latitude(coordenadas.getLatitude())
                 .longitude(coordenadas.getLongitude())
+                .usuarioId(usuarioId)
                 .build();
 
-        usuario.getUbicaciones().add(ubicacion);
-        return usuarioOutputPort.guardarUsuario(usuario).getUbicaciones().
-                stream()
-                .filter(u ->u.getUbicacionId().equals(ubicacion.getUbicacionId()))
-                .findFirst().orElseThrow(() -> new AddressNotFoundException(ubicacion.getUbicacionId()));
+        usuario.getDirecciones().add(ubicacion);
+        return direccionOutputPort.guardarUbicacion(ubicacion);
     }
     @Override
     @Transactional
@@ -56,7 +53,7 @@ public class DireccionService implements DireccionInputPort {
         Usuario usuario = usuarioOutputPort.obtenerUsuarioPorId(usuarioId).orElseThrow(
                 () -> new UserNotFoundException(usuarioId)
         );
-        List<Ubicacion> direccionesUsuario = usuario.getUbicaciones();
+        List<Ubicacion> direccionesUsuario = usuario.getDirecciones();
         Ubicacion ubicacion = direccionesUsuario.stream()
                 .filter(d -> d.getUbicacionId().equals(direccionId)).findFirst()
                 .orElseThrow(() -> new AddressNotFoundException(direccionId));
@@ -69,7 +66,7 @@ public class DireccionService implements DireccionInputPort {
         ubicacion.setLatitude(coordenadas.getLatitude());
         ubicacion.setLongitude(coordenadas.getLongitude());
         usuarioOutputPort.guardarUsuario(usuario);
-        return usuarioOutputPort.guardarUsuario(usuario).getUbicaciones().stream()
+        return usuarioOutputPort.guardarUsuario(usuario).getDirecciones().stream()
                 .filter(u -> u.getUbicacionId().equals(direccionId)).findFirst()
                 .orElseThrow(() -> new AddressNotFoundException(direccionId));
     }
@@ -78,7 +75,7 @@ public class DireccionService implements DireccionInputPort {
         Usuario usuario =  usuarioOutputPort.obtenerUsuarioPorId(usuarioId).orElseThrow(
                 () -> new UserNotFoundException(usuarioId)
         );
-        List<Ubicacion> direccionesUsuario = usuario.getUbicaciones();
+        List<Ubicacion> direccionesUsuario = usuario.getDirecciones();
         boolean eliminado = direccionesUsuario.removeIf(d -> d.getUbicacionId().equals(direccionId));
         if (!eliminado) {
             throw new AddressNotFoundException(direccionId);
@@ -103,7 +100,7 @@ public class DireccionService implements DireccionInputPort {
         Usuario usuario = usuarioOutputPort.obtenerUsuarioPorId(usuarioId).orElseThrow(
                 () -> new UserNotFoundException(usuarioId)
         );
-        return usuario.getUbicaciones();
+        return usuario.getDirecciones();
     }
 
 }

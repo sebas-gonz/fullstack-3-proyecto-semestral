@@ -9,4 +9,7 @@ public class UserNotFoundException extends ApiException {
     public UserNotFoundException(UUID id){
         super("Usuario con id " + id + " no encontrado",HttpStatus.NOT_FOUND);
     }
+    public UserNotFoundException(String id){
+        super("Usuario con id " + id + " no encontrado",HttpStatus.NOT_FOUND);
+    }
 }

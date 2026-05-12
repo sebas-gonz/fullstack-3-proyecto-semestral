@@ -15,6 +15,6 @@ public interface InventarioInputPort {
     List<Inventario> obtenerInventarios();
     void eliminarInventario(UUID inventarioId);
     void procesarDescuentoStock(DescontarStockCommand  descontarStockCommand);
-
+    List<Inventario> obtenerInventariosPorProducto(UUID productoId);
 
 }

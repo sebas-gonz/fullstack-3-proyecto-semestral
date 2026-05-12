@@ -50,4 +50,9 @@ public class ProductoController {
         productoInputPort.eliminarProducto(productoid);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/disponibles")
+    public ResponseEntity<List<ProductoWebResponse>> obtenerProductosDisponibles(@PathVariable UUID id){
+        List<ProductoWebResponse> responseList = productoWebMapper.toWebResponseList(productoInputPort.obtenerProductosDisponibles(id));
+        return ResponseEntity.ok(responseList);
+    }
 }

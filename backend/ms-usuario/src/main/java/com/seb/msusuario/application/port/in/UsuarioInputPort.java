@@ -12,6 +12,7 @@ public interface UsuarioInputPort {
     Usuario crearUsuario(CrearUsuarioCommand command);
     void eliminarUsuario(UUID id);
     Usuario obtenerUsuarioPorId(UUID id);
+    Usuario obtenerUsuarioPorIdAuth0(String id);
 
     Usuario actualizarUsuario(UUID id, CrearUsuarioCommand command);
 
