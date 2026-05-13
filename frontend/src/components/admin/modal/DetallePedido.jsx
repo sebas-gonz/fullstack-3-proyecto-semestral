@@ -23,7 +23,6 @@ export const DetallePedido = ({ pedido, onCerrar }) => {
             }
         };
         fetchDetalles();
-         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pedido.pedidoId]);
     const detallesMapeados = detalles.map(det => {
         const productoReal = productosMaestros.find(p => p.productoId === det.productoId);

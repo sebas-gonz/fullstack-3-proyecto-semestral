@@ -24,7 +24,11 @@ export const useEnvios = () => {
             const token = await obtenerToken();
             const res = await axios.get(`${API_URL}/disponibles`, { headers: { Authorization: `Bearer ${token}` } });
             setEnvios(mapearEnvios(res.data));
-        } catch (err) { console.error(err); } finally { setCargando(false); }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setCargando(false);
+        }
     }, [obtenerToken]);
 
     const listarEnviosEnRuta = useCallback(async (repartidorId) => {
@@ -33,7 +37,10 @@ export const useEnvios = () => {
             const token = await obtenerToken();
             const res = await axios.get(`${API_URL}/${repartidorId}/enruta`, { headers: { Authorization: `Bearer ${token}` } });
             setEnvios(mapearEnvios(res.data));
-        } catch (err) { console.error(err); } finally { setCargando(false); }
+        } catch (err) {
+            console.error(err);
+         setCargando(false);
+        }
     }, [obtenerToken]);
 
     const listarEnviosEntregados = useCallback(async (repartidorId) => {
@@ -42,7 +49,11 @@ export const useEnvios = () => {
             const token = await obtenerToken();
             const res = await axios.get(`${API_URL}/${repartidorId}/entregado`, { headers: { Authorization: `Bearer ${token}` } });
             setEnvios(mapearEnvios(res.data));
-        } catch (err) { console.error(err); } finally { setCargando(false); }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setCargando(false);
+        }
     }, [obtenerToken]);
 
     const tomarPedido = async (envioId, repartidorId) => {

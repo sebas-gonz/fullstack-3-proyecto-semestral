@@ -7,8 +7,6 @@ export const useCatalogo = () => {
     const [productos, setProductos] = useState([]);
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState(null);
-
-    // Apuntamos al Gateway, ruta de catálogo
     const API_URL = 'http://localhost:8091/api/v1/categorias';
 
     const listarProductosDelCatalogo = useCallback(async () => {
@@ -24,7 +22,7 @@ export const useCatalogo = () => {
             };
 
             const response = await axios.get(API_URL, config);
-            const categorias = response.data.content || response.data;
+            const categorias = response.data;
             let todosLosProductos = [];
             categorias.forEach(categoria => {
                 if (categoria.productos) {
@@ -42,7 +40,7 @@ export const useCatalogo = () => {
             });
             setProductos(todosLosProductos);
         } catch (err) {
-            console.error("Error al obtener el catálogo:", err);
+            console.error(err);
             setError("No se pudo cargar el catálogo de productos.");
         } finally {
             setCargando(false);

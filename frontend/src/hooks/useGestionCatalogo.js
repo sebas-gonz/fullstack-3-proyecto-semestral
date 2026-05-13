@@ -4,17 +4,12 @@ import { useAuth } from './useAuth';
 
 export const useGestionCatalogo = () => {
     const { obtenerToken } = useAuth();
-
     const [categorias, setCategorias] = useState([]);
     const [productosDeCategoria, setProductosDeCategoria] = useState([]);
-
-    // 🌟 ESTADOS RESTAURADOS PARA EL CATÁLOGO MAESTRO
     const [productosMaestros, setProductosMaestros] = useState([]);
     const [cargandoCatalogo, setCargandoCatalogo] = useState(false);
-
     const baseUrlCategorias = 'http://localhost:8091/api/v1/categorias';
 
-    // 🌟 FUNCIÓN RESTAURADA: Extrae todos los productos de todas las categorías
     const listarCatalogoCompleto = useCallback(async () => {
         setCargandoCatalogo(true);
         try {
@@ -22,15 +17,12 @@ export const useGestionCatalogo = () => {
             const response = await axios.get(baseUrlCategorias, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
             const categoriasData = response.data;
             setCategorias(categoriasData);
 
-            // Aplanamos la lista: extraemos los productos de cada categoría en un solo array
             let todosLosProductos = [];
             categoriasData.forEach(cat => {
                 if (cat.productos) {
-                    // Le inyectamos el nombre de la categoría para tener más contexto en las vistas
                     const prodConContexto = cat.productos.map(p => ({
                         ...p,
                         categoria: cat.nombre
@@ -38,15 +30,13 @@ export const useGestionCatalogo = () => {
                     todosLosProductos = [...todosLosProductos, ...prodConContexto];
                 }
             });
-
             setProductosMaestros(todosLosProductos);
         } catch (error) {
-            console.error("Error al cargar el catálogo completo:", error);
+            console.error(error);
         } finally {
             setCargandoCatalogo(false);
         }
     }, [obtenerToken]);
-
     const listarCategorias = useCallback(async () => {
         setCargandoCatalogo(true);
         try {
@@ -56,7 +46,7 @@ export const useGestionCatalogo = () => {
             });
             setCategorias(response.data);
         } catch (error) {
-            console.error("Error al listar categorías:", error);
+            console.error(error);
         } finally {
             setCargandoCatalogo(false);
         }
@@ -71,7 +61,7 @@ export const useGestionCatalogo = () => {
             });
             setProductosDeCategoria(response.data);
         } catch (error) {
-            console.error("Error al listar productos:", error);
+            console.error(error);
         } finally {
             setCargandoCatalogo(false);
         }
@@ -84,7 +74,7 @@ export const useGestionCatalogo = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
         } catch (error) {
-            console.error("Error al crear categoría:", error);
+            console.error(error);
             throw error;
         }
     };
@@ -96,7 +86,7 @@ export const useGestionCatalogo = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
         } catch (error) {
-            console.error("Error al eliminar categoría:", error);
+            console.error(error);
             throw error;
         }
     };
@@ -108,7 +98,7 @@ export const useGestionCatalogo = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
         } catch (error) {
-            console.error("Error al crear producto:", error);
+            console.error(error);
             throw error;
         }
     };
@@ -120,7 +110,7 @@ export const useGestionCatalogo = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
         } catch (error) {
-            console.error("Error al eliminar producto:", error);
+            console.error(error);
             throw error;
         }
     };

@@ -9,7 +9,9 @@ export const EditarStock = ({ inventarioId, stockActual, onCerrar, onGuardar }) 
     const [lote, setLote] = useState(stockActual.lote || '');
     const [cantidad, setCantidad] = useState(stockActual.cantidad !== undefined ? stockActual.cantidad : '');
     const formatearFechaParaInput = (isoString) => {
-        if (!isoString) return '';
+        if (!isoString){
+            return '';
+        }
         const fecha = new Date(isoString);
         fecha.setMinutes(fecha.getMinutes() - fecha.getTimezoneOffset());
         return fecha.toISOString().slice(0, 16);
@@ -21,10 +23,18 @@ export const EditarStock = ({ inventarioId, stockActual, onCerrar, onGuardar }) 
     }, [listarCatalogoCompleto]);
 
     const handleSubmit = () => {
-        if (!productoId) return alert("Debes seleccionar un producto.");
-        if (!lote.trim()) return alert("Debes ingresar el código del lote.");
-        if (cantidad === '' || parseInt(cantidad) < 0) return alert("Debes ingresar una cantidad válida.");
-        if (!fechaRegistroLote) return alert("Debes ingresar la fecha de registro del lote.");
+        if (!productoId){
+            return alert("Debes seleccionar un producto.");
+        }
+        if (!lote.trim()){
+            return alert("Debes ingresar el código del lote.");
+        }
+        if (cantidad === '' || parseInt(cantidad) < 0){
+            return alert("Debes ingresar una cantidad válida.");
+        }
+        if (!fechaRegistroLote){
+            return alert("Debes ingresar la fecha de registro del lote.");
+        }
 
         const fechaFormateada = new Date(fechaRegistroLote).toISOString();
         onGuardar(inventarioId, stockActual.stockId, {
@@ -42,7 +52,7 @@ export const EditarStock = ({ inventarioId, stockActual, onCerrar, onGuardar }) 
                 <select className="form-select bg-light" value={productoId} disabled>
                     <option value="">-- Selecciona el producto --</option>
                     {productosMaestros.map(prod => (
-                        <option key={prod.id} value={prod.id}>
+                        <option key={prod.productoId} value={prod.productoId}>
                             [{prod.sku}] {prod.nombre} - {prod.categoria}
                         </option>
                     ))}

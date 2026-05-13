@@ -16,7 +16,7 @@ export const useDireccionesUsuario = () => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error al agregar dirección:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoDireccion(false);
@@ -32,7 +32,7 @@ export const useDireccionesUsuario = () => {
             });
             return true;
         } catch (error) {
-            console.error("Error al eliminar dirección:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoDireccion(false);

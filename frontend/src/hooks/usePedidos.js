@@ -32,7 +32,7 @@ export const usePedidos = () => {
             setPedidos(pedidosMapeados);
             return response.data;
         } catch (error) {
-            console.error("Error al listar pedidos globales:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoPedidos(false);
@@ -48,7 +48,7 @@ export const usePedidos = () => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error al crear el pedido:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoPedidos(false);
@@ -64,7 +64,7 @@ export const usePedidos = () => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error al listar pedidos:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoPedidos(false);
@@ -80,7 +80,7 @@ export const usePedidos = () => {
             });
             return response.data;
         } catch (error) {
-            console.error(`Error al obtener el pedido ${pedidoId}:`, error);
+            console.error(`Error al obtener el pedido ${pedidoId} `, error);
             throw error;
         } finally {
             setCargandoPedidos(false);
@@ -96,7 +96,7 @@ export const usePedidos = () => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error al obtener pedidos del usuario:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoPedidos(false);
@@ -111,7 +111,7 @@ export const usePedidos = () => {
             });
             return response.data;
         } catch (error) {
-            console.error(`Error al obtener los detalles del pedido ${pedidoId}:`, error);
+            console.error(`Error al obtener los detalles del pedido ${pedidoId} `, error);
             throw error;
         }
     };

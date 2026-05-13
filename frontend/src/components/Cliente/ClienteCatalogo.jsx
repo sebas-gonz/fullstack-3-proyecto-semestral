@@ -161,7 +161,6 @@ export const ClienteCatalogo = () => {
     return (
         <div className="row">
             <div className="col-md-8">
-                {/* 🌟 VISTA DE CATEGORÍAS */}
                 <div className="card shadow-sm p-3 mb-3 border-info bg-light">
                     <h5 className="text-info fw-bold mb-3">1. ¿Qué estás buscando hoy?</h5>
                     <select className="form-select form-select-lg border-info" value={categoriaSeleccionada} onChange={handleSeleccionarCategoria}>
@@ -171,8 +170,6 @@ export const ClienteCatalogo = () => {
                         ))}
                     </select>
                 </div>
-
-                {/* 🌟 VISTA DE PRODUCTOS (Solo aparece tras elegir categoría) */}
                 {categoriaSeleccionada && (
                     <div className="card shadow-sm p-3 mb-4 border-top border-info border-3">
                         <h4 className="mb-3 text-secondary">2. Productos Disponibles</h4>
@@ -204,7 +201,6 @@ export const ClienteCatalogo = () => {
             <div className="col-md-4">
                 <div className="card shadow-sm p-3 border-primary sticky-top" style={{ top: '20px' }}>
                     <h4 className="mb-3 text-primary">Tu Carrito</h4>
-
                     {bodegaCarrito && (
                         <div className="alert alert-info py-2 px-3 small mb-3">
                             <i className="bi bi-shop me-2"></i>

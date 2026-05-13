@@ -17,7 +17,7 @@ export const usePedidosCliente = () => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error al crear el pedido:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoPedidos(false);
@@ -33,7 +33,7 @@ export const usePedidosCliente = () => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error al listar pedidos:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoPedidos(false);
@@ -49,7 +49,7 @@ export const usePedidosCliente = () => {
             });
             return response.data;
         } catch (error) {
-            console.error(`Error al obtener el pedido ${pedidoId}:`, error);
+            console.error(`Error al obtener el pedido ${pedidoId}`, error);
             throw error;
         } finally {
             setCargandoPedidos(false);

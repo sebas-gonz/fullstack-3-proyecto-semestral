@@ -38,7 +38,7 @@ export const AdminProductosDeCategoria = ({ categoria, onVolver }) => {
             alert("Producto añadido al catálogo.");
             listarProductosDeCategoria(categoria.categoriaId);
         } catch (error) {
-            alert("Error al crear el producto.");
+            console.error(error);
         }
     };
 

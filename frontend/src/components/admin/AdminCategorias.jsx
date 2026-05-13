@@ -32,11 +32,11 @@ export const AdminCategorias = () => {
         try {
             await crearNuevaCategoria(nuevaCategoria);
             setModalVisible(false);
-            setNuevaCategoria({nombre: '', descripcion: ''}); // Limpiamos el form
+            setNuevaCategoria({nombre: '', descripcion: ''});
             alert("¡Categoría creada con éxito!");
-            listarCategorias(); // Refrescamos la tabla
+            listarCategorias();
         } catch (error) {
-            alert("Hubo un error al intentar crear la categoría.");
+           console.error(error);
         }
     };
 

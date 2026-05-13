@@ -5,5 +5,5 @@ import org.mapstruct.MappingConstants;
 import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING )
-public interface AppInMapper {
+public interface AppDtoWebMapper {
 }

@@ -5,7 +5,6 @@ import {MisPedidos} from "../components/Cliente/MisPedidos.jsx";
 
 export const VistaCliente = () => {
     const [tabActiva, setTabActiva] = useState('perfil');
-
     return (
         <div className="container mt-4">
             <div className="card shadow-sm border-0">
@@ -33,7 +32,6 @@ export const VistaCliente = () => {
                             </button>
                         </li>
                     </ul>
-
                     {tabActiva === 'perfil' && <ClientePerfil />}
                     {tabActiva === 'catalogo' && <ClienteCatalogo />}
                     {tabActiva === 'pedido' && <MisPedidos/>}

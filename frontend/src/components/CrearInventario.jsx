@@ -30,7 +30,7 @@ export const CrearInventario = ({ onCerrar, onGuardar }) => {
                 />
                 {ubicacionSeleccionada && (
                     <div className="alert alert-success p-2 small mt-2 mb-0 shadow-sm">
-                        ✅ {ubicacionSeleccionada.direccionFormateada}
+                         {ubicacionSeleccionada.direccionFormateada}
                     </div>
                 )}
             </div>

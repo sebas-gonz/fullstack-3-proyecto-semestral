@@ -10,7 +10,6 @@ export const RegistroUsuario = () => {
         idAuth0: idBackend,
         rol: 'USER'
     });
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -23,7 +22,6 @@ export const RegistroUsuario = () => {
             alert("Error al sincronizar el perfil con el ERP.");
         }
     };
-
     return (
         <div className="container mt-5">
             <div className="card p-4 shadow">

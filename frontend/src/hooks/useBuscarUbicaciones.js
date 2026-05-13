@@ -28,11 +28,10 @@ export const useBuscarUbicaciones = () => {
             if (data.places.length > 0) {
                 setResultados(data.places);
             } else {
-                alert("No se encontraron lugares");
+                alert("Ingrese una ubicacion real.");
             }
         } catch (error) {
             console.error("Error en la busqueda de ubicaciones", error);
-            alert("Error en la busqueda de ubicaciones");
         } finally {
             setBuscando(false);
         }
@@ -41,7 +40,7 @@ export const useBuscarUbicaciones = () => {
         let calle = '';
         let numero = 'S/N';
         let ciudad = '';
-        let pais = ''; // Agregado para tu ms-usuario
+        let pais = '';
 
         lugarCrudo.addressComponents.forEach(component => {
             const types = component.types;

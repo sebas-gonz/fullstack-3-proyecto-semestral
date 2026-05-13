@@ -30,7 +30,7 @@ export const useUsuario = () => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error al registrar usuario:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoUsuario(false);
@@ -45,7 +45,7 @@ export const useUsuario = () => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error al actualizar usuario:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoUsuario(false);

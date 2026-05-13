@@ -17,7 +17,7 @@ export const useTienda = () => {
             });
             setCategorias(res.data);
         } catch (error) {
-            console.error("Error al cargar categorías", error);
+            console.error(error);
         }
     }, [obtenerToken]);
 
@@ -25,13 +25,12 @@ export const useTienda = () => {
         setCargando(true);
         try {
             const token = await obtenerToken();
-            // Llama a tu endpoint corregido
             const res = await axios.get(`${API_GW}/categorias/${categoriaId}/producto/disponibles`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setProductos(res.data);
         } catch (error) {
-            console.error("Error al cargar productos", error);
+            console.error(error);
         } finally {
             setCargando(false);
         }
@@ -45,7 +44,7 @@ export const useTienda = () => {
             });
             return res.data;
         } catch (error) {
-            console.error("Error consultando bodegas", error);
+            console.error(error);
             throw error;
         }
     };

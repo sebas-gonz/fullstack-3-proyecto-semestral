@@ -22,9 +22,7 @@ export const useInventarios = () => {
             const rawData = response.data.content || response.data;
             const inventariosMapeados = rawData.map(inv => {
                 const stockTotal = inv.stocks ? inv.stocks.reduce((acc, lote) => acc + lote.cantidad, 0) : 0;
-                const direccionFormateada = inv.ubicacion
-                    ? `${inv.ubicacion.calle} ${inv.ubicacion.numero}, ${inv.ubicacion.ciudad}`
-                    : 'Sin ubicación registrada';
+                const direccionFormateada = `${inv.ubicacion.calle} ${inv.ubicacion.numero}, ${inv.ubicacion.ciudad}`;
                 return {
                     id: inv.inventarioId,
                     nombre: inv.nombre,
@@ -35,7 +33,7 @@ export const useInventarios = () => {
             });
             setInventarios(inventariosMapeados);
         } catch (err) {
-            console.error("Error al obtener inventarios:", err);
+            console.error(err);
             setError("No se pudieron cargar los inventarios.");
         } finally {
             setCargando(false);
@@ -49,7 +47,7 @@ export const useInventarios = () => {
             });
             return response.data;
         } catch (err) {
-            console.error("Error al crear inventario:", err);
+            console.error(err);
             throw err;
         }
     };
@@ -58,12 +56,25 @@ export const useInventarios = () => {
         await axios.put(`${API_URL}/${id}`, datos, { headers: { Authorization: `Bearer ${token}` } });
     };
 
+    const obtenerStocksDetallados = async (inventarioId) => {
+        try {
+            const token = await obtenerToken();
+            const res = await axios.get(`http://localhost:8091/api/bff/v1/inventarios/${inventarioId}/stocks-detallados`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return res.data;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    };
     return {
         inventarios,
         cargando,
         error,
         listarInventarios,
         crearInventario,
-        actualizarInventario
+        actualizarInventario,
+        obtenerStocksDetallados,
     };
 };

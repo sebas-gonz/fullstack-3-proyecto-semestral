@@ -2,16 +2,16 @@ package com.seb.mscatalogo.infrastructure.adapter.in.web.controller;
 
 import com.seb.mscatalogo.application.port.in.ProductoInputPort;
 import com.seb.mscatalogo.application.port.in.command.categoria.CategoriaProductoWebRequestCommand;
+import com.seb.mscatalogo.domain.model.Producto;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.Producto.CategoriaProductoWebRequest;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.dto.Producto.ProductoWebResponse;
 import com.seb.mscatalogo.infrastructure.adapter.in.web.mapper.ProductoWebMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/producto")
@@ -24,5 +24,10 @@ public class ProductoGlobalController {
         CategoriaProductoWebRequestCommand categoriaProductoWebRequestCommand= productoWebMapper.toWebRequestCommand(categoriaProductoWebRequest);
         ProductoWebResponse productoWebResponse = productoWebMapper.toWebResponse(productoInputPort.cambiarCategoria(categoriaProductoWebRequestCommand));
         return ResponseEntity.accepted().body(productoWebResponse);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductoWebResponse> obtenerProductoPorId(@PathVariable UUID id){
+        Producto producto = productoInputPort.obtenerProductoPorId(id);
+        return ResponseEntity.ok().body(productoWebMapper.toWebResponse(producto));
     }
 }

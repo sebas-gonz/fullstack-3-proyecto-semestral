@@ -50,7 +50,7 @@ export const useStocks = () => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error al crear stock:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoStocks(false);
@@ -66,7 +66,7 @@ export const useStocks = () => {
             });
             return response.data;
         } catch (error) {
-            console.error("Error al actualizar stock:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoStocks(false);
@@ -82,7 +82,7 @@ export const useStocks = () => {
             });
             return true;
         } catch (error) {
-            console.error("Error al eliminar stock:", error);
+            console.error(error);
             throw error;
         } finally {
             setCargandoStocks(false);

@@ -51,8 +51,6 @@ export const VistaRepartidor = () => {
     return (
         <div className="container mt-4">
             <h2 className="text-warning fw-bold mb-4"><i className="bi bi-truck me-2"></i>Gestión de Logística</h2>
-
-            {/* Sistema de Tabs */}
             <ul className="nav nav-pills mb-4 bg-light p-2 rounded shadow-sm">
                 <li className="nav-item">
                     <button className={`nav-link ${tabActiva === 'disponibles' ? 'active bg-warning text-dark' : 'text-muted'}`}
@@ -92,7 +90,6 @@ export const VistaRepartidor = () => {
                         )}
                     </div>
                 </div>
-
                 <div className="col-md-5">
                     <div className="card shadow-sm p-3 sticky-top" style={{ top: '20px' }}>
                         {envioSeleccionado ? (
