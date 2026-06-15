@@ -39,7 +39,9 @@ export const useEnvios = () => {
             setEnvios(mapearEnvios(res.data));
         } catch (err) {
             console.error(err);
-         setCargando(false);
+
+        } finally {
+            setCargando(false);
         }
     }, [obtenerToken]);
 

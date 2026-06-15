@@ -26,9 +26,11 @@ public class Pedido {
     @Builder.Default
     private List<Detalle> detalles = new ArrayList<>();
     private BigDecimal total;
-
+    @Builder.Default
+    private BigDecimal costoEnvio = BigDecimal.ZERO;
     public void calcularTotal(){
-        total = detalles.stream().map(detalle -> detalle.getPrecio().multiply(BigDecimal.valueOf(detalle.getCantidad())))
+        BigDecimal subtotal = detalles.stream().map(detalle -> detalle.getPrecio().multiply(BigDecimal.valueOf(detalle.getCantidad())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        total = subtotal.add(costoEnvio);
     }
 }

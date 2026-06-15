@@ -5,10 +5,7 @@ import com.seb.mspedido.application.mapper.PedidoDomainMapper;
 import com.seb.mspedido.application.port.in.PedidoInputPort;
 import com.seb.mspedido.application.port.in.command.pedido.PedidoInputCommand;
 import com.seb.mspedido.application.port.in.command.stock.StockDescontadoCommand;
-import com.seb.mspedido.application.port.out.InventarioOutputPort;
-import com.seb.mspedido.application.port.out.PedidoEventPubilsherPort;
-import com.seb.mspedido.application.port.out.PedidoOutputPort;
-import com.seb.mspedido.application.port.out.ProductoCatalogoOutputPort;
+import com.seb.mspedido.application.port.out.*;
 import com.seb.mspedido.domain.model.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -19,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +31,7 @@ public class PedidoService implements PedidoInputPort {
     private final PedidoDomainMapper pedidoDomainMapper;
     private final PedidoEventPubilsherPort  pedidoEventPubilsherPort;
     private final InventarioOutputPort   inventarioOutputPort;
+    private final DistanciaOutputPort  distanciaOutputPort;
     @Override
     @Transactional
     public Pedido guardarPedido(PedidoInputCommand pedidoInputCommand) {
@@ -48,8 +47,15 @@ public class PedidoService implements PedidoInputPort {
             detalle.setPrecio(producto.precio());
             detalle.setFechaRegistro(Instant.now());
         });
-        Ubicacion ubi = inventarioOutputPort.obtenerUbicacionInventario(pedido.getDetalles().get(0).getInventarioId());
+        Ubicacion ubi = inventarioOutputPort.obtenerUbicacionInventario(pedido.getDetalles().getFirst().getInventarioId());
         pedido.setOrigen(ubi);
+        double distanciaKm = distanciaOutputPort.obtenerDistancia(pedido.getDestino().getLatitude(),pedido.getDestino().getLongitude(),
+                pedido.getOrigen().getLatitude(),pedido.getOrigen().getLongitude());
+        long costoEnvio = Math.round(distanciaKm * 2000);
+        if (costoEnvio < 2000) {
+            costoEnvio = 2000;
+        }
+        pedido.setCostoEnvio(BigDecimal.valueOf(costoEnvio));
         pedido.calcularTotal();
         pedido.setEstado(Estado.PENDIENTE);
         Pedido persistido = pedidoOutputPort.guardarPedido(pedido);

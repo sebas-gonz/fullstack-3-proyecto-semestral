@@ -20,5 +20,6 @@ public record PedidoWebResponse(UUID pedidoId,
                                 @JsonFormat(shape = JsonFormat.Shape.STRING)
                                 Instant fechaEntrega,
                                 List<DetalleWebResponse> detalles,
+                                BigDecimal costoEnvio,
                                 BigDecimal total) {
 }
