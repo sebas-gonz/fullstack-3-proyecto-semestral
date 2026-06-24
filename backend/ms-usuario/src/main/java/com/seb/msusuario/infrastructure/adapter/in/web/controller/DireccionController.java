@@ -1,6 +1,5 @@
 package com.seb.msusuario.infrastructure.adapter.in.web.controller;
 
-import com.seb.msusuario.application.mapper.UbicacionDomainMapper;
 import com.seb.msusuario.application.port.in.DireccionInputPort;
 import com.seb.msusuario.application.port.in.command.CrearUbicacionCommand;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.direccion.DireccionRequest;
@@ -8,7 +7,6 @@ import com.seb.msusuario.infrastructure.adapter.in.web.dto.direccion.DireccionRe
 import com.seb.msusuario.infrastructure.adapter.in.web.mapper.DireccionWebMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,7 +28,7 @@ public class DireccionController {
         DireccionResponse response = direccionWebMapper.toResponse(direccionInputPort.agregarDireccion(id,command));
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(response.ubicacionId()).toUri();
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.created(location).body(response);
     }
     @GetMapping("/{direccionId}")
     public ResponseEntity<DireccionResponse> obtenerDireccion(@PathVariable UUID direccionId){

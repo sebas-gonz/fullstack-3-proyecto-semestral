@@ -2,10 +2,11 @@ package com.seb.msusuario.application.port.in;
 
 import com.seb.msusuario.application.port.in.command.CrearUsuarioCommand;
 import com.seb.msusuario.domain.model.Usuario;
-import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioRequest;
-import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface UsuarioInputPort {
@@ -17,4 +18,6 @@ public interface UsuarioInputPort {
     Usuario actualizarUsuario(UUID id, CrearUsuarioCommand command);
 
     List<Usuario> obtenerTodosUsuarios();
+    Page<Usuario> obtenerRepartidores(Pageable pageable);
+    List<Usuario> obtenerUsuariosPorIds(Set<UUID> usuarioIds);
 }

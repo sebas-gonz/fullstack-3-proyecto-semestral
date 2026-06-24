@@ -7,9 +7,9 @@ import { useUsuario } from '../../hooks/useUsuario';
 import { usePedidos } from '../../hooks/usePedidos';
 
 export const ClienteCatalogo = () => {
-    const { idBackend } = useAuth();
-    const { verificarUsuarioPorAuth0 } = useUsuario();
-    const { crearPedido, cargandoPedidos } = usePedidos();
+    const {idBackend} = useAuth();
+    const {verificarUsuarioPorAuth0} = useUsuario();
+    const { crearPedido, cotizarCostoEnvio, cargandoPedidos } = usePedidos();
     const {
         categorias, productos, cargando,
         listarCategorias, listarProductosPorCategoria, consultarBodegasPorProducto
@@ -19,7 +19,8 @@ export const ClienteCatalogo = () => {
     const [direccionIdSeleccionada, setDireccionIdSeleccionada] = useState('');
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
     const [bodegaCarrito, setBodegaCarrito] = useState(null);
-
+    const [costoEnvio, setCostoEnvio] = useState(0);
+    const [distanciaKm, setDistanciaKm] = useState(0);
     const [modalBodega, setModalBodega] = useState({
         visible: false, producto: null, bodegas: []
     });
@@ -33,8 +34,8 @@ export const ClienteCatalogo = () => {
     useEffect(() => {
         listarCategorias();
         const cargarDatosUsuario = async () => {
-            if (!idBackend){
-              return;
+            if (!idBackend) {
+                return;
             }
             try {
                 const respuesta = await verificarUsuarioPorAuth0(idBackend);
@@ -64,6 +65,33 @@ export const ClienteCatalogo = () => {
         };
         cargarDirecciones();
     }, [listarCategorias, idBackend, verificarUsuarioPorAuth0]);
+
+    useEffect(() => {
+        const calcularCostoEnvio = async () => {
+            if (bodegaCarrito && direccionIdSeleccionada && direcciones.length > 0) {
+                const dirDestino = direcciones.find(d => d.ubicacionId === direccionIdSeleccionada);
+
+                const request = {
+                    origenLatitude: bodegaCarrito.lat,
+                    origenLongitude: bodegaCarrito.lng,
+                    destinoLatitude: dirDestino.latitude,
+                    destinoLongitude: dirDestino.longitude
+                };
+
+                try {
+                    const data = await cotizarCostoEnvio(request);
+                    setCostoEnvio(data.costoEnvio);
+                    setDistanciaKm(data.distanciaKm);
+                } catch (err) {
+                    console.error("Error al cotizar:", err);
+                }
+            } else {
+                setCostoEnvio(0);
+                setDistanciaKm(0);
+            }
+        };
+        calcularCostoEnvio();
+    }, [bodegaCarrito, direccionIdSeleccionada, direcciones]);
     const handleSeleccionarCategoria = (e) => {
         const catId = e.target.value;
         setCategoriaSeleccionada(catId);
@@ -75,15 +103,22 @@ export const ClienteCatalogo = () => {
         try {
             const bodegasConStock = await consultarBodegasPorProducto(producto.productoId);
             if (bodegasConStock.length === 0) {
-                return alert("Ups, parece que nos quedamos sin stock físico de este producto en todas las sucursales.");
+                return alert("Sin stock.");
             }
             setModalBodega({ visible: true, producto, bodegas: bodegasConStock });
         } catch (error) {
-            alert("Error al verificar disponibilidad en bodegas.");
+            console.error("Error al verificar stock en inventario.");
         }
     };
-    const confirmarAñadirAlCarrito = (bodegaId, nombreBodega) => {
+    const confirmarAñadirAlCarrito = (bodegaId, nombreBodega, ubicacion) => {
         const { producto } = modalBodega;
+
+        const bodegaSeleccionada = {
+            id: bodegaId,
+            nombre: nombreBodega,
+            lat: ubicacion.latitude,
+            lng: ubicacion.longitude
+        };
 
         if (carrito.length > 0 && bodegaCarrito.id !== bodegaId) {
             alert(`Tu carrito actual está asociado a los envíos desde "${bodegaCarrito.nombre}". Para pedir desde otra sucursal, debes vaciar tu carrito o hacer pedidos separados.`);
@@ -91,7 +126,7 @@ export const ClienteCatalogo = () => {
         }
 
         if (carrito.length === 0) {
-            setBodegaCarrito({ id: bodegaId, nombre: nombreBodega });
+            setBodegaCarrito(bodegaSeleccionada);
         }
 
         setCarrito(prev => {
@@ -162,9 +197,9 @@ export const ClienteCatalogo = () => {
         <div className="row">
             <div className="col-md-8">
                 <div className="card shadow-sm p-3 mb-3 border-info bg-light">
-                    <h5 className="text-info fw-bold mb-3">1. ¿Qué estás buscando hoy?</h5>
+                    <h5 className="text-info fw-bold mb-3">1. ¿Qué estás buscando?</h5>
                     <select className="form-select form-select-lg border-info" value={categoriaSeleccionada} onChange={handleSeleccionarCategoria}>
-                        <option value="">-- Selecciona una Categoría para ver los productos --</option>
+                        <option value="">Selecciona una Categoría para ver los productos</option>
                         {categorias.map(cat => (
                             <option key={cat.categoriaId} value={cat.categoriaId}>{cat.nombre}</option>
                         ))}
@@ -237,9 +272,29 @@ export const ClienteCatalogo = () => {
                                 <button className="btn btn-sm btn-outline-danger" onClick={() => quitarDelCarrito(item.productoId)}>X</button>
                             </li>
                         ))}
-                        <li className="list-group-item d-flex justify-content-between bg-light mt-2 border-primary border-2">
-                            <span className="fw-bold">Total (CLP)</span>
-                            <strong className="text-primary">${totalCarrito}</strong>
+                        <li className="list-group-item bg-light mt-2 border-primary border-2">
+                            <div className="d-flex justify-content-between mb-1">
+                                <span className="small text-muted">Subtotal:</span>
+                                <span className="fw-bold">${totalCarrito}</span>
+                            </div>
+                            <div className="d-flex justify-content-between mb-1">
+                                <span className="small text-muted">Distancia estimada:</span>
+                                <span className="fw-bold text-secondary">{distanciaKm ? distanciaKm.toFixed(1) : 0} km</span>
+                            </div>
+                            <div className="d-flex justify-content-between mb-1">
+                                <span className="small text-muted">Costo Envío:</span>
+                                <span className="fw-bold">${costoEnvio}</span>
+                            </div>
+                            <hr className="my-1"/>
+                            <div className="d-flex justify-content-between align-items-center">
+                                <span className="fw-bold">Total Final</span>
+                                <strong className="text-primary fs-5">${totalCarrito + costoEnvio}</strong>
+                            </div>
+                            <div className="mt-2 text-center">
+                                <small className="text-muted" style={{ fontSize: '0.7rem' }}>
+                                    * Precio mínimo de envío garantizado: $2.000
+                                </small>
+                            </div>
                         </li>
                     </ul>
 
@@ -267,7 +322,7 @@ export const ClienteCatalogo = () => {
                                 key={bodega.inventarioId}
                                 type="button"
                                 className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                                onClick={() => confirmarAñadirAlCarrito(bodega.inventarioId, bodega.nombre)}
+                                onClick={() => confirmarAñadirAlCarrito(bodega.inventarioId, bodega.nombre, bodega.ubicacion)}
                             >
                                 <div>
                                     <strong className="d-block text-primary">{bodega.nombre}</strong>

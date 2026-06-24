@@ -98,8 +98,12 @@ public class StockService implements StockInputPort {
         Stock eliminado = inventario.getStocks().stream().filter(s -> s.getStockId().equals(stockId)).findFirst().orElseThrow(
                 () -> new StockNotFoundException(stockId)
         );
+        boolean stockEliminado = inventario.getStocks().removeIf(s -> s.getStockId().equals(stockId));
+        if (stockEliminado) {
+            inventarioOutputPort.guardarInventario(inventario);
+        }
         UUID productoId = eliminado.getProductoId();
-        inventarioOutputPort.guardarInventario(inventario);
+
         publicarStockTotalProducto(productoId);
     }
     private void publicarStockTotalProducto(UUID productoId) {

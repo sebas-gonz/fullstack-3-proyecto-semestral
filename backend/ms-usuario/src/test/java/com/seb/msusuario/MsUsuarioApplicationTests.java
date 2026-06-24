@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.IntStream;
 @Slf4j
-@SpringBootTest(properties = {// Reemplaza esto por el nombre exacto de tu property
+@SpringBootTest(properties = {
         "GEOCODING_KEY=key"
         })
 class MsUsuarioApplicationTests {
@@ -28,9 +28,6 @@ class MsUsuarioApplicationTests {
     @Autowired
     private UsuarioMapper usuarioMapper;
 
-    @Test
-	void contextLoads() {
-	}
     @Disabled
     @Test
     void crearUsuarios() {

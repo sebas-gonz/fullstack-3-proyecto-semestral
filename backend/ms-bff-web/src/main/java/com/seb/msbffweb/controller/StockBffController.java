@@ -2,7 +2,7 @@ package com.seb.msbffweb.controller;
 
 import com.seb.msbffweb.client.InventarioClient;
 import com.seb.msbffweb.client.ProductoClient;
-import com.seb.msbffweb.dto.in.producto.ProductoWebResponse;
+import com.seb.msbffweb.dto.out.producto.ProductoWebResponse;
 import com.seb.msbffweb.dto.in.stock.StockWebResponse;
 import com.seb.msbffweb.dto.out.stock.StockDetalladoResponse;
 import lombok.AllArgsConstructor;

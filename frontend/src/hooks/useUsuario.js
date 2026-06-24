@@ -7,6 +7,7 @@ export const useUsuario = () => {
     const [cargandoUsuario, setCargandoUsuario] = useState(false);
 
     const API_URL = 'http://localhost:8091/api/v1/usuarios';
+    const bffUrl = 'http://localhost:8091/api/bff/usuarios';
     const verificarUsuarioPorAuth0 = useCallback(async (idAuth0) => {
         try {
             const token = await obtenerToken();
@@ -51,10 +52,23 @@ export const useUsuario = () => {
             setCargandoUsuario(false);
         }
     };
+    const obtenerRepartidores = async (page = 0) => {
+        try {
+            const token = await obtenerToken();
+            const response = await axios.get(`${bffUrl}/repartidores?page=${page}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            return response.data;
+        } catch (error) {
+            console.error("Error al obtener repartidores:", error);
+            return { content: [], totalPages: 0 };
+        }
+    };
     return {
         verificarUsuarioPorAuth0,
         registrarUsuario,
         actualizarUsuario,
-        cargandoUsuario
+        cargandoUsuario,
+        obtenerRepartidores
     };
 };

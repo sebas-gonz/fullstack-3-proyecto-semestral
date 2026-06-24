@@ -9,9 +9,12 @@ import com.seb.msusuario.application.port.in.UsuarioInputPort;
 import com.seb.msusuario.application.port.out.UsuarioOutputPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -70,5 +73,18 @@ public class UsuarioService implements UsuarioInputPort {
     @Override
     public List<Usuario> obtenerTodosUsuarios() {
         return  usuarioOutputPort.obtenerTodosUsuarios();
+    }
+
+    @Override
+    public Page<Usuario> obtenerRepartidores(Pageable pageable) {
+        return usuarioOutputPort.obtenerRepartidores(pageable);
+    }
+
+    @Override
+    public List<Usuario> obtenerUsuariosPorIds(Set<UUID> usuarioIds) {
+        if (usuarioIds == null || usuarioIds.isEmpty()) {
+            return List.of();
+        }
+        return usuarioOutputPort.obtenerUsuariosPorIds(usuarioIds);
     }
 }

@@ -2,18 +2,22 @@ package com.seb.msusuario.infrastructure.adapter.in.web.controller;
 
 import com.seb.msusuario.application.port.in.UsuarioInputPort;
 import com.seb.msusuario.application.port.in.command.CrearUsuarioCommand;
+import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.RepartidorRestResponseDto;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioRequest;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioResponse;
 import com.seb.msusuario.infrastructure.adapter.in.web.mapper.UsuarioWebMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -57,5 +61,18 @@ public class UsuarioController {
     public ResponseEntity<?> delete(@PathVariable UUID id){
         usuarioInputPort.eliminarUsuario(id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/repartidores")
+    public ResponseEntity<Page<RepartidorRestResponseDto>> obtenerRepartidores(
+            @RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<RepartidorRestResponseDto> repartidores = usuarioInputPort.obtenerRepartidores(pageable).map(usuarioWebMapper::toRepartidorResponseDto);
+        return ResponseEntity.ok(repartidores);
+    }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<List<UsuarioResponse>> obtenerUsuariosPorIds(@RequestBody Set<UUID> usuarioIds) {
+        List<UsuarioResponse> responses = usuarioWebMapper.toResponseList(usuarioInputPort.obtenerUsuariosPorIds(usuarioIds));
+        return ResponseEntity.ok(responses);
     }
 }

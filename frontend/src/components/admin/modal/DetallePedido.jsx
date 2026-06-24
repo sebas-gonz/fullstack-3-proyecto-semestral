@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { ModalBase } from '../../ModalBase.jsx';
 import { usePedidos } from '../../../hooks/usePedidos.js';
 import { useGestionCatalogo } from '../../../hooks/useGestionCatalogo.js';
+import { MapaRuta} from "../../MapaRuta.jsx";
 
 export const DetallePedido = ({ pedido, onCerrar }) => {
     const { obtenerDetallesPorPedido } = usePedidos();
     const { productosMaestros, listarCatalogoCompleto } = useGestionCatalogo();
     const [detalles, setDetalles] = useState([]);
     const [cargando, setCargando] = useState(true);
+
+    const [distanciaRuta, setDistanciaRuta] = useState('');
 
     useEffect(() => {
         listarCatalogoCompleto();
@@ -24,6 +27,7 @@ export const DetallePedido = ({ pedido, onCerrar }) => {
         };
         fetchDetalles();
     }, [pedido.pedidoId]);
+
     const detallesMapeados = detalles.map(det => {
         const productoReal = productosMaestros.find(p => p.productoId === det.productoId);
         return {
@@ -32,6 +36,10 @@ export const DetallePedido = ({ pedido, onCerrar }) => {
             sku: productoReal ? productoReal.sku : 'N/A'
         };
     });
+
+    const subtotalProductos = detallesMapeados.reduce((acc, item) => acc + (item.cantidad * item.precio), 0);
+    const origenCoords = pedido.origen ? { lat: pedido.origen.latitude, lng: pedido.origen.longitude } : null;
+    const destinoCoords = pedido.destino ? { lat: pedido.destino.latitude, lng: pedido.destino.longitude } : null;
 
     return (
         <ModalBase titulo={`Detalle de Pedido: ${pedido.pedidoId.split('-')[0].toUpperCase()}`} onCerrar={onCerrar}>
@@ -53,6 +61,22 @@ export const DetallePedido = ({ pedido, onCerrar }) => {
                     </div>
                 </div>
             </div>
+
+            {origenCoords && destinoCoords && (
+                <div className="mb-4 border rounded overflow-hidden shadow-sm">
+                    <div className="bg-secondary text-white p-2 text-center fw-bold d-flex justify-content-between align-items-center px-3">
+                        <span><i className="bi bi-map-fill me-2"></i>Ruta del Envío</span>
+                        {distanciaRuta && <span className="badge bg-light text-dark">{distanciaRuta}</span>}
+                    </div>
+
+                    <MapaRuta
+                        origenCoords={origenCoords}
+                        destinoCoords={destinoCoords}
+                        onDistanciaCalculada={setDistanciaRuta}
+                    />
+                </div>
+            )}
+
             <h6 className="fw-bold mb-3 border-bottom pb-2">Artículos del Pedido</h6>
             {cargando ? (
                 <div className="text-center py-3"><div className="spinner-border spinner-border-sm text-primary"></div></div>
@@ -69,9 +93,25 @@ export const DetallePedido = ({ pedido, onCerrar }) => {
                     ))}
                 </ul>
             )}
-            <div className="d-flex justify-content-end align-items-center bg-light p-2 rounded border">
-                <span className="me-3 fw-bold">Total Pagado:</span>
-                <h4 className="mb-0 text-primary fw-bold">${pedido.total}</h4>
+
+            <div className="bg-light p-3 rounded border">
+                <div className="d-flex justify-content-between mb-1">
+                    <span className="text-muted small">Subtotal Productos:</span>
+                    <span className="fw-bold text-secondary">${subtotalProductos}</span>
+                </div>
+                <div className="d-flex justify-content-between mb-1">
+                    <span className="text-muted small">Distancia:</span>
+                    <span className="fw-bold text-secondary">{distanciaRuta || 'Calculando...'}</span>
+                </div>
+                <div className="d-flex justify-content-between mb-1">
+                    <span className="text-muted small">Costo de Envío:</span>
+                    <span className="fw-bold text-secondary">${pedido.costoEnvio || 0}</span>
+                </div>
+                <hr className="my-2"/>
+                <div className="d-flex justify-content-between align-items-center">
+                    <span className="fw-bold text-dark">Total Transacción:</span>
+                    <h4 className="mb-0 text-primary fw-bold">${pedido.total}</h4>
+                </div>
             </div>
 
             <div className="mt-4 d-flex justify-content-end">

@@ -37,7 +37,7 @@ export const MisPedidos = () => {
                 </div>
             ) : (
                 <div className="row">
-                    {pedidos.map((pedido) => (
+                    {pedidos.content.map((pedido) => (
                         <div key={pedido.pedidoId} className="col-12 mb-3">
                             <div className="card shadow-sm border-start border-4 border-primary">
                                 <div className="card-body">

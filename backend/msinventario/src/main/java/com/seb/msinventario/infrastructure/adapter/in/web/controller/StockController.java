@@ -20,8 +20,8 @@ import java.util.UUID;
 @RequestMapping("api/v1/inventarios/{inventarioId}/stock")
 @AllArgsConstructor
 public class StockController {
-    private StockInputPort stockInputPort;
-    private StockWebMapper  stockWebMapper;
+    private final StockInputPort stockInputPort;
+    private final StockWebMapper  stockWebMapper;
     @GetMapping
     public ResponseEntity<List<StockWebResponse>> findAll(@PathVariable UUID inventarioId) {
         List<Stock> stockList = stockInputPort.obtenerStocks(inventarioId);

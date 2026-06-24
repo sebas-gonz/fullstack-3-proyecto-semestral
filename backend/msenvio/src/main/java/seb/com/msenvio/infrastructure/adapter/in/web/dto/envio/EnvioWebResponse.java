@@ -8,7 +8,9 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record EnvioWebResponse(UUID envioId,
+                               UUID pedidoId,
                                UUID repartidorId,
+
                                EstadoEnvio estado,
                                UbicacionWebResponse destino,
                                UbicacionWebResponse origen,

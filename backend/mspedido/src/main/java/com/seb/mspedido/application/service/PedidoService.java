@@ -5,6 +5,7 @@ import com.seb.mspedido.application.mapper.PedidoDomainMapper;
 import com.seb.mspedido.application.port.in.PedidoInputPort;
 import com.seb.mspedido.application.port.in.command.pedido.PedidoInputCommand;
 import com.seb.mspedido.application.port.in.command.stock.StockDescontadoCommand;
+import com.seb.mspedido.application.port.in.query.CotizacionEnvioQuery;
 import com.seb.mspedido.application.port.out.*;
 import com.seb.mspedido.domain.model.*;
 import jakarta.transaction.Transactional;
@@ -18,7 +19,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -39,6 +42,7 @@ public class PedidoService implements PedidoInputPort {
         if (pedido.getDetalles() == null || pedido.getDetalles().isEmpty()) {
             throw new IllegalArgumentException("El pedido debe contener al menos un detalle");
         }
+        //Obtenemos la informacion del producto consultando la tabla cache del producto.
         pedido.getDetalles().forEach(detalle -> {
             ProductoCache producto = productoCatalogoOutputPort.getProductoReferencia(detalle.getProductoId())
                     .orElseThrow(
@@ -47,15 +51,14 @@ public class PedidoService implements PedidoInputPort {
             detalle.setPrecio(producto.precio());
             detalle.setFechaRegistro(Instant.now());
         });
+        //Ubicacion del origen
         Ubicacion ubi = inventarioOutputPort.obtenerUbicacionInventario(pedido.getDetalles().getFirst().getInventarioId());
         pedido.setOrigen(ubi);
-        double distanciaKm = distanciaOutputPort.obtenerDistancia(pedido.getDestino().getLatitude(),pedido.getDestino().getLongitude(),
-                pedido.getOrigen().getLatitude(),pedido.getOrigen().getLongitude());
-        long costoEnvio = Math.round(distanciaKm * 2000);
-        if (costoEnvio < 2000) {
-            costoEnvio = 2000;
-        }
-        pedido.setCostoEnvio(BigDecimal.valueOf(costoEnvio));
+        //Instancia de el objeto para realizar la consulta del costo de envio
+        CotizacionEnvioQuery cotizacionEnvioQuery = new CotizacionEnvioQuery(pedido.getOrigen().getLatitude(),pedido.getOrigen().getLongitude(),
+                pedido.getDestino().getLatitude(),pedido.getDestino().getLongitude());
+        CotizacionEnvioResultado cotizacionCostoEnvio = this.cotizarCostoDeEnvio(cotizacionEnvioQuery);
+        pedido.setCostoEnvio(cotizacionCostoEnvio.costoEnvio());
         pedido.calcularTotal();
         pedido.setEstado(Estado.PENDIENTE);
         Pedido persistido = pedidoOutputPort.guardarPedido(pedido);
@@ -151,7 +154,51 @@ public class PedidoService implements PedidoInputPort {
     }
 
     @Override
-    public List<Pedido> obtenerPedidosPorUsuario(UUID idUsuario) {
-        return pedidoOutputPort.obtenerPedidosPorUsuario(idUsuario);
+    public Page<Pedido> obtenerPedidosPorUsuario(UUID idUsuario,  Pageable pageable) {
+        return pedidoOutputPort.obtenerPedidosPorUsuario(idUsuario, pageable);
     }
+
+    @Override
+    public CotizacionEnvioResultado cotizarCostoDeEnvio(CotizacionEnvioQuery cotizacionEnvioQuery) {
+        double distanciaKm = distanciaOutputPort.obtenerDistancia(cotizacionEnvioQuery.destinoLatitude(),cotizacionEnvioQuery.destinoLongitude(),
+                cotizacionEnvioQuery.origenLatitude(),cotizacionEnvioQuery.origenLongitude());
+        long costoEnvio = Math.round(distanciaKm * 2000);
+        if (costoEnvio < 2000) costoEnvio = 2000;
+        return new CotizacionEnvioResultado(BigDecimal.valueOf(costoEnvio),distanciaKm);
+    }
+
+    @Override
+    public Page<Pedido> buscarPedido(String param, Pageable  pageable) {
+        if (param == null || param.isBlank()){
+            return pedidoOutputPort.obtenerPedidos(pageable);
+        }
+        return pedidoOutputPort.buscarPedido(param, pageable);
+    }
+    @Override
+    public List<String> obtenerEstadosPedidos(){
+        List<String> estadosEnvios = Arrays.stream(Estado.values()).map(Enum::name).toList();
+        return estadosEnvios;
+    }
+
+    @Override
+    public Page<Pedido> obtenerPedidosPorEstado(String estadoPedido, Pageable pageable) {
+        try{
+            if (estadoPedido == null || estadoPedido.isBlank()){
+                return pedidoOutputPort.obtenerPedidos(pageable);
+            }
+            Estado estado = Enum.valueOf(Estado.class, estadoPedido.toUpperCase());
+            return pedidoOutputPort.obtenerPedidosPorEstado(estado, pageable);
+        } catch (IllegalArgumentException e){
+            return pedidoOutputPort.obtenerPedidos(pageable);
+        }
+    }
+
+    @Override
+    public List<Pedido> obtenerPedidosPorIds(Set<UUID> pedidoIds) {
+        if (pedidoIds == null || pedidoIds.isEmpty()){
+            return List.of();
+        }
+        return pedidoOutputPort.obtenerPedidosPorIds(pedidoIds);
+    }
+
 }

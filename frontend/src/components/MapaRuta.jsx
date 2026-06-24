@@ -4,7 +4,7 @@ import { GoogleMap, useJsApiLoader, DirectionsRenderer, Marker } from '@react-go
 const containerStyle = { width: '100%', height: '400px', borderRadius: '8px' };
 const centroPorDefecto = { lat: -34.1708, lng: -70.7444 };
 
-export const MapaRuta = ({ origenCoords, destinoCoords }) => {
+export const MapaRuta = ({ origenCoords, destinoCoords, onDistanciaCalculada }) => {
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
@@ -23,6 +23,10 @@ export const MapaRuta = ({ origenCoords, destinoCoords }) => {
                 (result, status) => {
                     if (status === window.google.maps.DirectionsStatus.OK) {
                         setDirectionsResponse(result);
+                        if (onDistanciaCalculada) {
+                            const distancia = result.routes[0].legs[0].distance.text;
+                            onDistanciaCalculada(distancia);
+                        }
                     } else {
                         console.error("Error al calcular la ruta:", status);
                     }

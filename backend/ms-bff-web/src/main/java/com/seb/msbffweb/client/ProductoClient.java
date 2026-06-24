@@ -1,6 +1,6 @@
 package com.seb.msbffweb.client;
 
-import com.seb.msbffweb.dto.in.producto.ProductoWebResponse;
+import com.seb.msbffweb.dto.out.producto.ProductoWebResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

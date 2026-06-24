@@ -3,6 +3,7 @@ package com.seb.msusuario.infrastructure.adapter.in.web.mapper;
 
 import com.seb.msusuario.application.port.in.command.CrearUsuarioCommand;
 import com.seb.msusuario.domain.model.Usuario;
+import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.RepartidorRestResponseDto;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioRequest;
 import com.seb.msusuario.infrastructure.adapter.in.web.dto.usuario.UsuarioResponse;
 import org.mapstruct.Mapper;
@@ -18,4 +19,5 @@ public interface UsuarioWebMapper {
     UsuarioResponse toResponse(Usuario usuario);
     @Mapping(target = "direcciones",source = "direcciones")
     List<UsuarioResponse> toResponseList(List<Usuario> usuarios);
+    RepartidorRestResponseDto toRepartidorResponseDto(Usuario usuario);
 }

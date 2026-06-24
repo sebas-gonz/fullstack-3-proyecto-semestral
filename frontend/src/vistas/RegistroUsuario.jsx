@@ -3,12 +3,21 @@ import { useAuth } from '../hooks/useAuth';
 import axios from 'axios';
 export const RegistroUsuario = () => {
     const { usuario, obtenerToken, idBackend } = useAuth();
+    const rolesAuth0 = usuario?.["https://erp-api.com/roles"] || [];
+
+    let rolDefinitivo = 'USER';
+    if (rolesAuth0.includes('ADMIN')) {
+        rolDefinitivo = 'ADMIN';
+    } else if (rolesAuth0.includes('DELIVER')) {
+        rolDefinitivo = 'DELIVER';
+    }
+
     const [formData, setFormData] = useState({
         nombre: '',
         apellido: '',
         email: usuario?.email || '',
         idAuth0: idBackend,
-        rol: 'USER'
+        rol: rolDefinitivo
     });
     const handleSubmit = async (e) => {
         e.preventDefault();

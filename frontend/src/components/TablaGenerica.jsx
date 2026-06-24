@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TablaGenerica = ({columns, data, actions}) => {
+const TablaGenerica = ({columns, data = [], actions}) => {
     return (
         <div className="table-responsive shadow-sm rounded">
             <table className="table table-hover align-middle bg-white">

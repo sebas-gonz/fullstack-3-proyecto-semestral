@@ -25,22 +25,18 @@ export const VistaRepartidor = () => {
         };
         cargarRepartidor();
     }, [idBackend, verificarUsuarioPorAuth0]);
+
     useEffect(() => {
         if (!repartidorId) return;
         setEnvioSeleccionado(null);
 
-        if (tabActiva === 'disponibles') listarEnviosDisponibles();
-        else if (tabActiva === 'en_ruta') listarEnviosEnRuta(repartidorId);
+        if (tabActiva === 'en_ruta') listarEnviosEnRuta(repartidorId);
         else if (tabActiva === 'historial') listarEnviosEntregados(repartidorId);
     }, [tabActiva, repartidorId, listarEnviosDisponibles, listarEnviosEnRuta, listarEnviosEntregados]);
 
     const handleAccionPrincipal = async () => {
         try {
-            if (tabActiva === 'disponibles') {
-                await tomarPedido(envioSeleccionado.id, repartidorId);
-                alert("Pedido asignado. Ahora lo verás en 'Mis Rutas'.");
-                setTabActiva('en_ruta');
-            } else if (tabActiva === 'en_ruta') {
+             if (tabActiva === 'en_ruta') {
                 await entregarPedido(envioSeleccionado.id);
                 alert("Entrega confirmada.");
                 setTabActiva('historial');
@@ -52,10 +48,6 @@ export const VistaRepartidor = () => {
         <div className="container mt-4">
             <h2 className="text-warning fw-bold mb-4"><i className="bi bi-truck me-2"></i>Gestión de Logística</h2>
             <ul className="nav nav-pills mb-4 bg-light p-2 rounded shadow-sm">
-                <li className="nav-item">
-                    <button className={`nav-link ${tabActiva === 'disponibles' ? 'active bg-warning text-dark' : 'text-muted'}`}
-                            onClick={() => setTabActiva('disponibles')}>📦 Disponibles</button>
-                </li>
                 <li className="nav-item">
                     <button className={`nav-link ${tabActiva === 'en_ruta' ? 'active bg-primary' : 'text-muted'}`}
                             onClick={() => setTabActiva('en_ruta')}>🛣️ Mis Rutas</button>
@@ -104,7 +96,7 @@ export const VistaRepartidor = () => {
                                         className={`btn w-100 mt-3 fw-bold py-2 ${tabActiva === 'disponibles' ? 'btn-warning' : 'btn-success'}`}
                                         onClick={handleAccionPrincipal}
                                     >
-                                        {tabActiva === 'disponibles' ? '🚀 Tomar este Pedido' : '🏁 Confirmar Entrega'}
+                                        {tabActiva === 'disponibles' ? '🚀 Tomar este Pedido' : 'Confirmar Entrega'}
                                     </button>
                                 )}
                             </>

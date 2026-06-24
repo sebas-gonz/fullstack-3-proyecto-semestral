@@ -88,9 +88,22 @@ public class EnvioController {
         return ResponseEntity.ok(envioWebMapper.toResponse(envio));
     }
     @PostMapping("/{id}/entregar")
-    public ResponseEntity<EnvioWebResponse> asignarRepartidor(@PathVariable UUID id) {
+    public ResponseEntity<EnvioWebResponse> entregarPedido(@PathVariable UUID id) {
         Envio envio = envioInputPort.actualizarEstado(id, EstadoEnvio.ENTREGADO);
         return ResponseEntity.ok(envioWebMapper.toResponse(envio));
     }
 
+    @GetMapping("/estado-envios")
+    public ResponseEntity<List<String>> obtenerEstadoDeEnvios() {
+        List<String> estadoDeEnvios = envioInputPort.obtenerEstadosDeEnvios();
+        return ResponseEntity.ok(estadoDeEnvios);
+    }
+    @GetMapping("/estado/{estado}")
+    public ResponseEntity<Page<EnvioWebResponse>> obtenerEnviosPorEstado(@PathVariable String estado,
+                                                                         @RequestParam(defaultValue = "0") int page,
+                                                                         @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<EnvioWebResponse> enviosResponse = envioInputPort.obtenerEnviosPorEstado(estado,pageable).map(envioWebMapper::toResponse);
+        return ResponseEntity.ok(enviosResponse);
+    }
 }

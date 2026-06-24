@@ -14,6 +14,8 @@ import seb.com.msenvio.application.port.out.EnvioOutputPort;
 import seb.com.msenvio.domain.model.Envio;
 import seb.com.msenvio.domain.model.EstadoEnvio;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -82,5 +84,24 @@ public class EnvioService implements EnvioInputPort {
     @Override
     public Page<Envio> obtenerEnviosEntregados(UUID repartidorId, Pageable pageable) {
         return envioOutputPort.obtenerEnviosPorEstadoYRepartidor(EstadoEnvio.ENTREGADO, repartidorId, pageable);
+    }
+
+    @Override
+    public List<String> obtenerEstadosDeEnvios() {
+        List<String> estadoDeEnvios = Arrays.stream(EstadoEnvio.values()).map(Enum::name).toList();
+        return estadoDeEnvios;
+    }
+
+    @Override
+    public Page<Envio> obtenerEnviosPorEstado(String estado, Pageable pageable) {
+        try{
+            if (estado == null || estado.isBlank()){
+                return envioOutputPort.obtenerEnvios(pageable);
+            }
+            EstadoEnvio estadoEnvio = EstadoEnvio.valueOf(estado);
+            return envioOutputPort.obtenerEnviosPorEstado(estadoEnvio, pageable);
+        } catch (IllegalArgumentException e){
+            return envioOutputPort.obtenerEnvios(pageable);
+        }
     }
 }
